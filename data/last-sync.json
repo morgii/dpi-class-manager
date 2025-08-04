@@ -1,4 +1,62 @@
 {
-  "timestamp": "2025-08-04T16:28:50.852Z",
-  "version": "1.0"
+  "sunday": [],
+  "monday": [
+    {
+      "time": "8:00-9:00",
+      "subject": "গণিত (Mathematics)",
+      "teacher": "জনাব আহমেদ (Mr. Ahmed)",
+      "status": "normal"
+    },
+    {
+      "time": "9:00-10:00", 
+      "subject": "পদার্থবিজ্ঞান (Physics)",
+      "teacher": "ড. রহমান (Dr. Rahman)",
+      "status": "normal"
+    },
+    {
+      "time": "10:00-11:00",
+      "subject": "রসায়ন (Chemistry)", 
+      "teacher": "মিসেস খান (Mrs. Khan)",
+      "status": "normal"
+    }
+  ],
+  "tuesday": [
+    {
+      "time": "8:00-9:00",
+      "subject": "ইংরেজি (English)",
+      "teacher": "মিস ফাতিমা (Miss Fatima)",
+      "status": "normal"
+    },
+    {
+      "time": "9:00-10:00",
+      "subject": "বাংলা (Bangla)",
+      "teacher": "জনাব করিম (Mr. Karim)",
+      "status": "normal"
+    }
+  ],
+  "wednesday": [
+    {
+      "time": "8:00-9:00",
+      "subject": "কম্পিউটার সায়েন্স (Computer Science)",
+      "teacher": "জনাব হাসান (Mr. Hasan)",
+      "status": "normal"
+    }
+  ],
+  "thursday": [
+    {
+      "time": "8:00-9:00",
+      "subject": "জীববিজ্ঞান (Biology)",
+      "teacher": "ড. বেগম (Dr. Begum)",
+      "status": "normal"
+    }
+  ],
+  "friday": [
+    {
+      "time": "8:00-9:00",
+      "subject": "ইতিহাস (History)",
+      "teacher": "জনাব আলী (Mr. Ali)",
+      "status": "normal"
+    }
+  ],
+  "saturday": []
 }
