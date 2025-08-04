@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>DPI Class Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            overflow-x: hidden;
+            background: #0f0f23;
+            touch-action: manipulation;
+        }
+
+        .no-scroll {
+            overflow: hidden;
+        }
+
+        .modal-backdrop {
+            backdrop-filter: blur(8px);
+        }
+
+        .routine-cell {
+            transition: all 0.3s ease;
+        }
+
+        .routine-cell:hover {
+            transform: translateY(-2px);
+        }
+
+        .routine-cell.cancelled {
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+        }
+
+        .routine-cell.problem {
+            background: linear-gradient(135deg, #d97706, #92400e);
+        }
+
+        .routine-cell.normal {
+            background: linear-gradient(135deg, #3b82f6, #1e40af);
+        }
+
+        .floating-btn {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .bottom-nav {
+            backdrop-filter: blur(20px);
+            background: rgba(15, 15, 35, 0.95);
+            border-top: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .nav-item.active {
+            color: #3b82f6;
+        }
+
+        .homework-card {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .notice-card {
+            background: linear-gradient(135deg, #1e1b4b, #312e81);
+            border-left: 4px solid #3b82f6;
+        }
+
+        .announcement-card {
+            background: linear-gradient(135deg, #166534, #15803d);
+            border-left: 4px solid #10b981;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen pb-20">
+    <!-- Header -->
+    <header class="bg-gray-800 shadow-lg sticky top-0 z-50">
+        <div class="max-w-md mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-graduation-cap text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold">DPI Class Manager</h1>
+                    <p class="text-xs text-gray-400">Dashboard</p>
+                </div>
+            </div>
+            <button id="adminBtn" class="text-gray-400 hover:text-white">
+                <i class="fas fa-cog text-xl"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-md mx-auto px-4 py-6 space-y-6" id="mainContent">
+        <!-- Today's Classes -->
+        <section class="space-y-4">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl font-bold">Today's Classes</h2>
+                <span class="text-sm text-gray-400" id="currentDate"></span>
+            </div>
+            <div id="todayClasses" class="space-y-3">
+                <!-- Dynamic content -->
+            </div>
+        </section>
+
+        <!-- Daily Notice -->
+        <section class="space-y-4" id="dailyNoticeSection">
+            <h2 class="text-xl font-bold">Daily Notice</h2>
+            <div id="dailyNotice" class="notice-card p-4 rounded-lg">
+                <p class="text-sm">No daily notice for today.</p>
+            </div>
+        </section>
+
+        <!-- Announcements -->
+        <section class="space-y-4">
+            <h2 class="text-xl font-bold">Announcements</h2>
+            <div id="announcements" class="space-y-3">
+                <!-- Dynamic content -->
+            </div>
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="space-y-4">
+            <h2 class="text-xl font-bold">Quick Access</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="navigateTo('routine')" class="bg-gradient-to-r from-blue-600 to-purple-600 p-4 rounded-lg flex flex-col items-center space-y-2 hover:scale-105 transition-transform">
+                    <i class="fas fa-calendar-alt text-2xl"></i>
+                    <span class="font-medium">Routine</span>
+                </button>
+                <button onclick="navigateTo('homeworks')" class="bg-gradient-to-r from-green-600 to-teal-600 p-4 rounded-lg flex flex-col items-center space-y-2 hover:scale-105 transition-transform">
+                    <i class="fas fa-book text-2xl"></i>
+                    <span class="font-medium">Homeworks</span>
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Routine Page -->
+    <div id="routinePage" class="hidden max-w-md mx-auto px-4 py-6">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold">Class Routine</h2>
+            <button id="editRoutineBtn" class="text-blue-400 hover:text-blue-300">
+                <i class="fas fa-edit text-xl"></i>
+            </button>
+        </div>
+        
+        <!-- Week Days -->
+        <div class="mb-4 flex space-x-1 overflow-x-auto">
+            <button class="day-btn min-w-0 flex-1 py-2 px-3 text-xs font-medium rounded-lg bg-gray-700 text-gray-300" data-day="sunday">Sun</button>
+            <button class="day-btn min-w-0 flex-1 py-2 px-3 text-xs font-medium rounded-lg bg-gray-700 text-gray-300" data-day="monday">Mon</button>
+            <button class="day-btn min-w-0 flex-1 py-2 px-3 text-xs font-medium rounded-lg bg-gray-700 text-gray-300" data-day="tuesday">Tue</button>
+            <button class="day-btn min-w-0 flex-1 py-2 px-3 text-xs font-medium rounded-lg bg-gray-700 text-gray-300" data-day="wednesday">Wed</button>
+            <button class="day-btn min-w-0 flex-1 py-2 px-3 text-xs font-medium rounded-lg bg-gray-700 text-gray-300" data-day="thursday">Thu</button>
+            <button class="day-btn min-w-0 flex-1 py-2 px-3 text-xs font-medium rounded-lg bg-gray-700 text-gray-300" data-day="friday">Fri</button>
+            <button class="day-btn min-w-0 flex-1 py-2 px-3 text-xs font-medium rounded-lg bg-gray-700 text-gray-300" data-day="saturday">Sat</button>
+        </div>
+
+        <!-- Routine Table -->
+        <div id="routineContainer" class="space-y-3">
+            <!-- Dynamic content -->
+        </div>
+    </div>
+
+    <!-- Homeworks Page -->
+    <div id="homeworksPage" class="hidden max-w-md mx-auto px-4 py-6">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold">Homeworks</h2>
+            <button id="addHomeworkBtn" class="text-green-400 hover:text-green-300">
+                <i class="fas fa-plus text-xl"></i>
+            </button>
+        </div>
+        
+        <div id="homeworksList" class="space-y-4">
+            <!-- Dynamic content -->
+        </div>
+    </div>
+
+    <!-- Floating Admin Button -->
+    <button id="floatingAdmin" class="floating-btn bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg transition-all duration-300 hidden">
+        <i class="fas fa-tools text-xl"></i>
+    </button>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav fixed bottom-0 left-0 right-0 max-w-md mx-auto">
+        <div class="flex items-center justify-around py-3">
+            <button class="nav-item active flex flex-col items-center space-y-1" data-page="home">
+                <i class="fas fa-home text-xl"></i>
+                <span class="text-xs">Home</span>
+            </button>
+            <button class="nav-item flex flex-col items-center space-y-1" data-page="routine">
+                <i class="fas fa-calendar-alt text-xl"></i>
+                <span class="text-xs">Routine</span>
+            </button>
+            <button class="nav-item flex flex-col items-center space-y-1" data-page="homeworks">
+                <i class="fas fa-book text-xl"></i>
+                <span class="text-xs">Notes</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Admin Modal -->
+    <div id="adminModal" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-gray-800 rounded-lg p-6 w-full max-w-sm">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold">Admin Panel</h3>
+                    <button class="close-modal text-gray-400 hover:text-white">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-3">
+                    <button id="addAnnouncementBtn" class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-lg text-left">
+                        <i class="fas fa-bullhorn mr-2"></i> Add Announcement
+                    </button>
+                    <button id="editDailyNoticeBtn" class="w-full bg-blue-600 hover:bg-blue-700 p-3 rounded-lg text-left">
+                        <i class="fas fa-edit mr-2"></i> Edit Daily Notice
+                    </button>
+                    <button id="githubSettingsBtn" class="w-full bg-purple-600 hover:bg-purple-700 p-3 rounded-lg text-left">
+                        <i class="fab fa-github mr-2"></i> GitHub Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GitHub Settings Modal -->
+    <div id="githubModal" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-gray-800 rounded-lg p-6 w-full max-w-sm">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold">GitHub Settings</h3>
+                    <button class="close-modal text-gray-400 hover:text-white">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Personal Access Token</label>
+                        <input type="password" id="githubToken" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white" placeholder="ghp_...">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Repository</label>
+                        <input type="text" id="githubRepo" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white" placeholder="username/repo-name">
+                    </div>
+                    <div class="space-y-2">
+                        <button id="saveGithubSettings" class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-lg">
+                            Save Settings
+                        </button>
+                        <button id="manualCommitBtn" class="w-full bg-blue-600 hover:bg-blue-700 p-3 rounded-lg">
+                            <i class="fab fa-github mr-2"></i>Commit to GitHub Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Content Modals -->
+    <div id="contentModal" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-gray-800 rounded-lg p-6 w-full max-w-sm max-h-96 overflow-y-auto">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 id="contentModalTitle" class="text-lg font-bold">Add Content</h3>
+                    <button class="close-modal text-gray-400 hover:text-white">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div id="contentForm" class="space-y-4">
+                    <!-- Dynamic form content -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Storage
+        let appData = {
+            routine: {},
+            announcements: [],
+            homeworks: [],
+            dailyNotice: "",
+            githubSettings: {
+                token: "",
+                repo: ""
+            }
+        };
+
+        // Load data from localStorage
+        function loadData() {
+            const saved = localStorage.getItem('dpiClassManager');
+            if (saved) {
+                appData = { ...appData, ...JSON.parse(saved) };
+            }
+            
+            // Initialize with sample data if empty
+            if (Object.keys(appData.routine).length === 0) {
+                initializeSampleData();
+            }
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('dpiClassManager', JSON.stringify(appData));
+        }
+
+        // Initialize sample data
+        function initializeSampleData() {
+            appData.routine = {
+                monday: [
+                    { time: "9:00-10:00", subject: "Mathematics", teacher: "Prof. Smith", status: "normal" },
+                    { time: "10:00-11:00", subject: "Physics", teacher: "Dr. Johnson", status: "normal" },
+                    { time: "11:00-12:00", subject: "Chemistry", teacher: "Prof. Davis", status: "normal" }
+                ],
+                tuesday: [
+                    { time: "9:00-10:00", subject: "English", teacher: "Ms. Wilson", status: "normal" },
+                    { time: "10:00-11:00", subject: "History", teacher: "Prof. Brown", status: "normal" }
+                ],
+                wednesday: [
+                    { time: "9:00-10:00", subject: "Mathematics", teacher: "Prof. Smith", status: "normal" },
+                    { time: "10:00-11:00", subject: "Computer Science", teacher: "Dr. Lee", status: "normal" }
+                ],
+                thursday: [
+                    { time: "9:00-10:00", subject: "Physics", teacher: "Dr. Johnson", status: "normal" },
+                    { time: "10:00-11:00", subject: "Chemistry", teacher: "Prof. Davis", status: "normal" }
+                ],
+                friday: [
+                    { time: "9:00-10:00", subject: "English", teacher: "Ms. Wilson", status: "normal" },
+                    { time: "10:00-11:00", subject: "Mathematics", teacher: "Prof. Smith", status: "normal" }
+                ]
+            };
+
+            appData.announcements = [
+                {
+                    id: 1,
+                    title: "Welcome to New Semester",
+                    content: "Welcome everyone to the new academic semester. Please check your routines and homeworks regularly.",
+                    date: new Date().toISOString()
+                }
+            ];
+
+            appData.homeworks = [
+                {
+                    id: 1,
+                    subject: "Mathematics",
+                    title: "Algebra Practice",
+                    description: "Complete exercises 1-20 from chapter 5",
+                    dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+                    type: "text",
+                    attachments: []
+                }
+            ];
+
+            appData.dailyNotice = "Don't forget to submit your assignments on time!";
+            saveData();
+        }
+
+        // Navigation
+        let currentPage = 'home';
+
+        function navigateTo(page) {
+            // Hide all pages
+            document.getElementById('mainContent').classList.add('hidden');
+            document.getElementById('routinePage').classList.add('hidden');
+            document.getElementById('homeworksPage').classList.add('hidden');
+
+            // Show selected page
+            if (page === 'home') {
+                document.getElementById('mainContent').classList.remove('hidden');
+                renderHomePage();
+            } else if (page === 'routine') {
+                document.getElementById('routinePage').classList.remove('hidden');
+                renderRoutinePage();
+            } else if (page === 'homeworks') {
+                document.getElementById('homeworksPage').classList.remove('hidden');
+                renderHomeworksPage();
+            }
+
+            // Update navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`[data-page="${page}"]`).classList.add('active');
+
+            currentPage = page;
+        }
+
+        // Render Home Page
+        function renderHomePage() {
+            // Set current date
+            const today = new Date();
+            document.getElementById('currentDate').textContent = today.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            // Render today's classes
+            const dayName = today.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+            const todayClasses = appData.routine[dayName] || [];
+            
+            const todayClassesHTML = todayClasses.length > 0 
+                ? todayClasses.map(cls => `
+                    <div class="routine-cell ${cls.status} p-4 rounded-lg text-white">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-semibold">${cls.subject}</h4>
+                                <p class="text-sm opacity-90">${cls.teacher}</p>
+                            </div>
+                            <span class="text-xs bg-black bg-opacity-20 px-2 py-1 rounded">${cls.time}</span>
+                        </div>
+                        ${cls.status === 'cancelled' ? '<p class="text-xs mt-2 opacity-75">Class Cancelled</p>' : ''}
+                        ${cls.status === 'problem' ? '<p class="text-xs mt-2 opacity-75">Schedule Change</p>' : ''}
+                    </div>
+                `).join('')
+                : '<p class="text-gray-400 text-center py-8">No classes scheduled for today</p>';
+
+            document.getElementById('todayClasses').innerHTML = todayClassesHTML;
+
+            // Render daily notice
+            document.getElementById('dailyNotice').innerHTML = `
+                <p class="text-sm">${appData.dailyNotice || 'No daily notice for today.'}</p>
+            `;
+
+            // Render announcements
+            const announcementsHTML = appData.announcements.length > 0
+                ? appData.announcements.slice(0, 3).map(announcement => `
+                    <div class="announcement-card p-4 rounded-lg">
+                        <h4 class="font-semibold mb-2">${announcement.title}</h4>
+                        <p class="text-sm text-gray-300 mb-2">${announcement.content}</p>
+                        <span class="text-xs text-gray-400">${new Date(announcement.date).toLocaleDateString()}</span>
+                    </div>
+                `).join('')
+                : '<p class="text-gray-400 text-center py-8">No announcements</p>';
+
+            document.getElementById('announcements').innerHTML = announcementsHTML;
+        }
+
+        // Render Routine Page
+        function renderRoutinePage() {
+            const today = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+            
+            // Highlight current day
+            document.querySelectorAll('.day-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white');
+                btn.classList.add('bg-gray-700', 'text-gray-300');
+                
+                if (btn.dataset.day === today) {
+                    btn.classList.remove('bg-gray-700', 'text-gray-300');
+                    btn.classList.add('bg-blue-600', 'text-white');
+                }
+            });
+
+            renderRoutineForDay(today);
+        }
+
+        function renderRoutineForDay(day) {
+            const classes = appData.routine[day] || [];
+            const routineHTML = classes.length > 0
+                ? classes.map((cls, index) => `
+                    <div class="routine-cell ${cls.status} p-4 rounded-lg text-white cursor-pointer" onclick="editClass('${day}', ${index})">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-semibold">${cls.subject}</h4>
+                                <p class="text-sm opacity-90">${cls.teacher}</p>
+                            </div>
+                            <span class="text-xs bg-black bg-opacity-20 px-2 py-1 rounded">${cls.time}</span>
+                        </div>
+                        ${cls.status === 'cancelled' ? '<p class="text-xs mt-2 opacity-75">Class Cancelled</p>' : ''}
+                        ${cls.status === 'problem' ? '<p class="text-xs mt-2 opacity-75">Schedule Change</p>' : ''}
+                    </div>
+                `).join('')
+                : '<p class="text-gray-400 text-center py-8">No classes scheduled</p>';
+
+            document.getElementById('routineContainer').innerHTML = routineHTML;
+        }
+
+        // Render Homeworks Page
+        function renderHomeworksPage() {
+            const homeworksHTML = appData.homeworks.length > 0
+                ? appData.homeworks.map(hw => `
+                    <div class="homework-card p-4 rounded-lg">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h4 class="font-semibold">${hw.title}</h4>
+                                <p class="text-sm text-blue-400">${hw.subject}</p>
+                            </div>
+                            <button onclick="editHomework(${hw.id})" class="text-gray-400 hover:text-white">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                        <p class="text-sm text-gray-300 mb-3">${hw.description}</p>
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-gray-400">Due: ${new Date(hw.dueDate).toLocaleDateString()}</span>
+                            ${hw.attachments && hw.attachments.length > 0 ? `<span class="text-blue-400"><i class="fas fa-paperclip mr-1"></i>${hw.attachments.length} files</span>` : ''}
+                        </div>
+                    </div>
+                `).join('')
+                : '<p class="text-gray-400 text-center py-8">No homeworks assigned</p>';
+
+            document.getElementById('homeworksList').innerHTML = homeworksHTML;
+        }
+
+        // Modal Management
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+            document.body.classList.add('no-scroll');
+        }
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+            document.body.classList.remove('no-scroll');
+        }
+
+        function showContentModal(title, formHTML) {
+            document.getElementById('contentModalTitle').textContent = title;
+            document.getElementById('contentForm').innerHTML = formHTML;
+            showModal('contentModal');
+        }
+
+        // Admin Functions
+        function editClass(day, index) {
+            const cls = appData.routine[day][index];
+            const formHTML = `
+                <div>
+                    <label class="block text-sm font-medium mb-2">Status</label>
+                    <select id="classStatus" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white">
+                        <option value="normal" ${cls.status === 'normal' ? 'selected' : ''}>Normal</option>
+                        <option value="cancelled" ${cls.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                        <option value="problem" ${cls.status === 'problem' ? 'selected' : ''}>Problem/Change</option>
+                    </select>
+                </div>
+                <button onclick="updateClassStatus('${day}', ${index})" class="w-full bg-blue-600 hover:bg-blue-700 p-3 rounded-lg">
+                    Update Status
+                </button>
+            `;
+            showContentModal('Edit Class Status', formHTML);
+        }
+
+        function updateClassStatus(day, index) {
+            const status = document.getElementById('classStatus').value;
+            appData.routine[day][index].status = status;
+            saveData();
+            hideModal('contentModal');
+            if (currentPage === 'routine') renderRoutinePage();
+            if (currentPage === 'home') renderHomePage();
+        }
+
+        function addAnnouncement() {
+            const formHTML = `
+                <div>
+                    <label class="block text-sm font-medium mb-2">Title</label>
+                    <input type="text" id="announcementTitle" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white" placeholder="Announcement title">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Content</label>
+                    <textarea id="announcementContent" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white h-24" placeholder="Announcement content"></textarea>
+                </div>
+                <button onclick="saveAnnouncement()" class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-lg">
+                    Add Announcement
+                </button>
+            `;
+            showContentModal('Add Announcement', formHTML);
+        }
+
+        function saveAnnouncement() {
+            const title = document.getElementById('announcementTitle').value;
+            const content = document.getElementById('announcementContent').value;
+            
+            if (title && content) {
+                appData.announcements.unshift({
+                    id: Date.now(),
+                    title,
+                    content,
+                    date: new Date().toISOString()
+                });
+                saveData();
+                hideModal('contentModal');
+                if (currentPage === 'home') renderHomePage();
+            }
+        }
+
+        function editDailyNotice() {
+            const formHTML = `
+                <div>
+                    <label class="block text-sm font-medium mb-2">Daily Notice</label>
+                    <textarea id="dailyNoticeText" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white h-24" placeholder="Daily notice">${appData.dailyNotice}</textarea>
+                </div>
+                <button onclick="saveDailyNotice()" class="w-full bg-blue-600 hover:bg-blue-700 p-3 rounded-lg">
+                    Update Notice
+                </button>
+            `;
+            showContentModal('Edit Daily Notice', formHTML);
+        }
+
+        function saveDailyNotice() {
+            const notice = document.getElementById('dailyNoticeText').value;
+            appData.dailyNotice = notice;
+            saveData();
+            hideModal('contentModal');
+            if (currentPage === 'home') renderHomePage();
+        }
+
+        function addHomework() {
+            const formHTML = `
+                <div>
+                    <label class="block text-sm font-medium mb-2">Subject</label>
+                    <input type="text" id="homeworkSubject" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white" placeholder="Subject">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Title</label>
+                    <input type="text" id="homeworkTitle" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white" placeholder="Homework title">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Description</label>
+                    <textarea id="homeworkDescription" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white h-20" placeholder="Homework description"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Due Date</label>
+                    <input type="date" id="homeworkDueDate" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">PDF Link (Optional)</label>
+                    <input type="url" id="homeworkPdfLink" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white" placeholder="https://...">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Image Link (Optional)</label>
+                    <input type="url" id="homeworkImageLink" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white" placeholder="https://...">
+                </div>
+                <button onclick="saveHomework()" class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-lg">
+                    Add Homework
+                </button>
+            `;
+            showContentModal('Add Homework', formHTML);
+        }
+
+        function saveHomework() {
+            const subject = document.getElementById('homeworkSubject').value;
+            const title = document.getElementById('homeworkTitle').value;
+            const description = document.getElementById('homeworkDescription').value;
+            const dueDate = document.getElementById('homeworkDueDate').value;
+            const pdfLink = document.getElementById('homeworkPdfLink').value;
+            const imageLink = document.getElementById('homeworkImageLink').value;
+            
+            if (subject && title && description && dueDate) {
+                const attachments = [];
+                if (pdfLink) attachments.push({ type: 'pdf', url: pdfLink });
+                if (imageLink) attachments.push({ type: 'image', url: imageLink });
+                
+                appData.homeworks.push({
+                    id: Date.now(),
+                    subject,
+                    title,
+                    description,
+                    dueDate: new Date(dueDate).toISOString(),
+                    attachments
+                });
+                saveData();
+                hideModal('contentModal');
+                if (currentPage === 'homeworks') renderHomeworksPage();
+            }
+        }
+
+        function editHomework(id) {
+            const homework = appData.homeworks.find(hw => hw.id === id);
+            const pdfAttachment = homework.attachments.find(att => att.type === 'pdf');
+            const imageAttachment = homework.attachments.find(att => att.type === 'image');
+            
+            const formHTML = `
+                <div>
+                    <label class="block text-sm font-medium mb-2">Subject</label>
+                    <input type="text" id="editHomeworkSubject" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white" value="${homework.subject}">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Title</label>
+                    <input type="text" id="editHomeworkTitle" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white" value="${homework.title}">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Description</label>
+                    <textarea id="editHomeworkDescription" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white h-20">${homework.description}</textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Due Date</label>
+                    <input type="date" id="editHomeworkDueDate" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white" value="${new Date(homework.dueDate).toISOString().split('T')[0]}">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">PDF Link</label>
+                    <input type="url" id="editHomeworkPdfLink" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white" value="${pdfAttachment ? pdfAttachment.url : ''}">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Image Link</label>
+                    <input type="url" id="editHomeworkImageLink" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white" value="${imageAttachment ? imageAttachment.url : ''}">
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="updateHomework(${id})" class="flex-1 bg-blue-600 hover:bg-blue-700 p-3 rounded-lg">
+                        Update
+                    </button>
+                    <button onclick="deleteHomework(${id})" class="flex-1 bg-red-600 hover:bg-red-700 p-3 rounded-lg">
+                        Delete
+                    </button>
+                </div>
+            `;
+            showContentModal('Edit Homework', formHTML);
+        }
+
+        function updateHomework(id) {
+            const subject = document.getElementById('editHomeworkSubject').value;
+            const title = document.getElementById('editHomeworkTitle').value;
+            const description = document.getElementById('editHomeworkDescription').value;
+            const dueDate = document.getElementById('editHomeworkDueDate').value;
+            const pdfLink = document.getElementById('editHomeworkPdfLink').value;
+            const imageLink = document.getElementById('editHomeworkImageLink').value;
+            
+            const homeworkIndex = appData.homeworks.findIndex(hw => hw.id === id);
+            if (homeworkIndex !== -1) {
+                const attachments = [];
+                if (pdfLink) attachments.push({ type: 'pdf', url: pdfLink });
+                if (imageLink) attachments.push({ type: 'image', url: imageLink });
+                
+                appData.homeworks[homeworkIndex] = {
+                    ...appData.homeworks[homeworkIndex],
+                    subject,
+                    title,
+                    description,
+                    dueDate: new Date(dueDate).toISOString(),
+                    attachments
+                };
+                saveData();
+                hideModal('contentModal');
+                if (currentPage === 'homeworks') renderHomeworksPage();
+            }
+        }
+
+        function deleteHomework(id) {
+            if (confirm('Are you sure you want to delete this homework?')) {
+                appData.homeworks = appData.homeworks.filter(hw => hw.id !== id);
+                saveData();
+                hideModal('contentModal');
+                if (currentPage === 'homeworks') renderHomeworksPage();
+            }
+        }
+
+        // GitHub Integration
+        function saveGithubSettings() {
+            const token = document.getElementById('githubToken').value;
+            const repo = document.getElementById('githubRepo').value;
+            
+            if (token && repo) {
+                appData.githubSettings = { token, repo };
+                saveData();
+                hideModal('githubModal');
+                alert('GitHub settings saved successfully!');
+            }
+        }
+
+        async function commitToGithub(commitMessage = 'Update class data') {
+            const { token, repo } = appData.githubSettings;
+            if (!token || !repo) {
+                alert('Please configure GitHub settings first');
+                showModal('githubModal');
+                return;
+            }
+
+            try {
+                // Show loading state
+                const loadingMsg = document.createElement('div');
+                loadingMsg.innerHTML = `
+                    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                        <div class="bg-gray-800 p-6 rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
+                                <span>Committing to GitHub...</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(loadingMsg);
+
+                // Prepare data files
+                const files = {
+                    'data/routine.json': JSON.stringify(appData.routine, null, 2),
+                    'data/announcements.json': JSON.stringify(appData.announcements, null, 2),
+                    'data/homeworks.json': JSON.stringify(appData.homeworks, null, 2),
+                    'data/daily-notice.json': JSON.stringify({ notice: appData.dailyNotice, lastUpdated: new Date().toISOString() }, null, 2),
+                    'data/last-sync.json': JSON.stringify({ timestamp: new Date().toISOString(), version: "1.0" }, null, 2)
+                };
+
+                // GitHub API requests
+                const baseUrl = `https://api.github.com/repos/${repo}`;
+                const headers = {
+                    'Authorization': `token ${token}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/vnd.github.v3+json'
+                };
+
+                // Get the default branch
+                const repoResponse = await fetch(baseUrl, { headers });
+                if (!repoResponse.ok) throw new Error('Repository not found or access denied');
+                
+                const repoData = await repoResponse.json();
+                const defaultBranch = repoData.default_branch;
+
+                // Get current commit SHA
+                const refResponse = await fetch(`${baseUrl}/git/refs/heads/${defaultBranch}`, { headers });
+                if (!refResponse.ok) throw new Error('Could not get branch reference');
+                
+                const refData = await refResponse.json();
+                const currentCommitSha = refData.object.sha;
+
+                // Get current tree
+                const commitResponse = await fetch(`${baseUrl}/git/commits/${currentCommitSha}`, { headers });
+                const commitData = await commitResponse.json();
+                const treeSha = commitData.tree.sha;
+
+                // Create blobs for each file
+                const blobs = {};
+                for (const [path, content] of Object.entries(files)) {
+                    const blobResponse = await fetch(`${baseUrl}/git/blobs`, {
+                        method: 'POST',
+                        headers,
+                        body: JSON.stringify({
+                            content: btoa(unescape(encodeURIComponent(content))),
+                            encoding: 'base64'
+                        })
+                    });
+                    const blobData = await blobResponse.json();
+                    blobs[path] = blobData.sha;
+                }
+
+                // Create new tree
+                const treeItems = Object.entries(blobs).map(([path, sha]) => ({
+                    path,
+                    mode: '100644',
+                    type: 'blob',
+                    sha
+                }));
+
+                const newTreeResponse = await fetch(`${baseUrl}/git/trees`, {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({
+                        base_tree: treeSha,
+                        tree: treeItems
+                    })
+                });
+                const newTreeData = await newTreeResponse.json();
+
+                // Create new commit
+                const newCommitResponse = await fetch(`${baseUrl}/git/commits`, {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({
+                        message: commitMessage,
+                        tree: newTreeData.sha,
+                        parents: [currentCommitSha]
+                    })
+                });
+                const newCommitData = await newCommitResponse.json();
+
+                // Update reference
+                await fetch(`${baseUrl}/git/refs/heads/${defaultBranch}`, {
+                    method: 'PATCH',
+                    headers,
+                    body: JSON.stringify({
+                        sha: newCommitData.sha
+                    })
+                });
+
+                // Remove loading state
+                document.body.removeChild(loadingMsg);
+                
+                // Show success message
+                alert(`✅ Successfully committed to GitHub!\nCommit: ${newCommitData.sha.substring(0, 7)}\nFiles updated: ${Object.keys(files).length}`);
+                
+                // Update last sync time
+                appData.lastGitHubSync = new Date().toISOString();
+                saveData();
+
+            } catch (error) {
+                // Remove loading state if it exists
+                const loadingElement = document.querySelector('.fixed.inset-0');
+                if (loadingElement) document.body.removeChild(loadingElement.parentElement);
+                
+                console.error('Error committing to GitHub:', error);
+                alert(`❌ Error committing to GitHub: ${error.message}\n\nPlease check:\n- Your token has repo permissions\n- Repository name is correct\n- You have write access`);
+            }
+        }
+
+        // Auto-commit function
+        async function autoCommitChanges() {
+            if (appData.githubSettings.token && appData.githubSettings.repo) {
+                const lastSync = appData.lastGitHubSync ? new Date(appData.lastGitHubSync) : new Date(0);
+                const timeSinceSync = Date.now() - lastSync.getTime();
+                
+                // Auto-commit if more than 5 minutes since last sync
+                if (timeSinceSync > 5 * 60 * 1000) {
+                    await commitToGithub('Auto-update: Class data synchronized');
+                }
+            }
+        }
+
+        // Manual commit trigger
+        function triggerManualCommit() {
+            const message = prompt('Enter commit message:', 'Manual update: Class data changes') || 'Manual update: Class data changes';
+            commitToGithub(message);
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            renderHomePage();
+
+            // Navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    navigateTo(this.dataset.page);
+                });
+            });
+
+            // Day buttons
+            document.querySelectorAll('.day-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.day-btn').forEach(b => {
+                        b.classList.remove('bg-blue-600', 'text-white');
+                        b.classList.add('bg-gray-700', 'text-gray-300');
+                    });
+                    this.classList.remove('bg-gray-700', 'text-gray-300');
+                    this.classList.add('bg-blue-600', 'text-white');
+                    renderRoutineForDay(this.dataset.day);
+                });
+            });
+
+            // Modal triggers
+            document.getElementById('adminBtn').addEventListener('click', () => showModal('adminModal'));
+            document.getElementById('floatingAdmin').addEventListener('click', () => showModal('adminModal'));
+            document.getElementById('addHomeworkBtn').addEventListener('click', addHomework);
+            document.getElementById('addAnnouncementBtn').addEventListener('click', addAnnouncement);
+            document.getElementById('editDailyNoticeBtn').addEventListener('click', editDailyNotice);
+            document.getElementById('githubSettingsBtn').addEventListener('click', () => showModal('githubModal'));
+            document.getElementById('saveGithubSettings').addEventListener('click', saveGithubSettings);
+            document.getElementById('manualCommitBtn').addEventListener('click', triggerManualCommit);
+
+            // Close modals
+            document.querySelectorAll('.close-modal').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const modal = this.closest('[id$="Modal"]');
+                    hideModal(modal.id);
+                });
+            });
+
+            // Close modals on backdrop click
+            document.querySelectorAll('[id$="Modal"]').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        hideModal(this.id);
+                    }
+                });
+            });
+
+            // Show floating admin button on scroll
+            let scrollTimeout;
+            window.addEventListener('scroll', function() {
+                clearTimeout(scrollTimeout);
+                document.getElementById('floatingAdmin').classList.remove('hidden');
+                
+                scrollTimeout = setTimeout(function() {
+                    document.getElementById('floatingAdmin').classList.add('hidden');
+                }, 3000);
+            });
+
+            // Prevent zoom and drag
+            document.addEventListener('touchstart', function(e) {
+                if (e.touches.length > 1) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', function(e) {
+                const now = (new Date()).getTime();
+                if (now - lastTouchEnd <= 300) {
+                    e.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
+
+            document.addEventListener('gesturestart', function(e) {
+                e.preventDefault();
+            });
+
+            document.addEventListener('gesturechange', function(e) {
+                e.preventDefault();
+            });
+
+            document.addEventListener('gestureend', function(e) {
+                e.preventDefault();
+            });
+        });
+
+        // Auto-save on data changes
+        window.addEventListener('beforeunload', function() {
+            saveData();
+        });
+
+        // Periodic auto-commit (optional)
+        setInterval(function() {
+            if (appData.githubSettings.token && appData.githubSettings.repo) {
+                // Auto-commit could be implemented here
+                console.log('Auto-save to localStorage completed');
+            }
+        }, 30000); // Every 30 seconds
+    </script>
+</body>
+</html>
