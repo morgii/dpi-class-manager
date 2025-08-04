@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "subject": "Mathematics",
+    "title": "Algebra Practice",
+    "description": "Complete exercises 1-20 from chapter 5",
+    "dueDate": "2025-08-11T00:00:00.000Z",
+    "type": "text",
+    "attachments": [
+      {
+        "type": "pdf",
+        "url": "https://example.com"
+      }
+    ]
+  }
+]

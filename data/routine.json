@@ -1,0 +1,78 @@
+{
+  "monday": [
+    {
+      "time": "9:00-10:00",
+      "subject": "Mathematics",
+      "teacher": "Prof. Smith",
+      "status": "cancelled"
+    },
+    {
+      "time": "10:00-11:00",
+      "subject": "Physics",
+      "teacher": "Dr. Johnson",
+      "status": "normal"
+    },
+    {
+      "time": "11:00-12:00",
+      "subject": "Chemistry",
+      "teacher": "Prof. Davis",
+      "status": "normal"
+    }
+  ],
+  "tuesday": [
+    {
+      "time": "9:00-10:00",
+      "subject": "English",
+      "teacher": "Ms. Wilson",
+      "status": "normal"
+    },
+    {
+      "time": "10:00-11:00",
+      "subject": "History",
+      "teacher": "Prof. Brown",
+      "status": "normal"
+    }
+  ],
+  "wednesday": [
+    {
+      "time": "9:00-10:00",
+      "subject": "Mathematics",
+      "teacher": "Prof. Smith",
+      "status": "normal"
+    },
+    {
+      "time": "10:00-11:00",
+      "subject": "Computer Science",
+      "teacher": "Dr. Lee",
+      "status": "normal"
+    }
+  ],
+  "thursday": [
+    {
+      "time": "9:00-10:00",
+      "subject": "Physics",
+      "teacher": "Dr. Johnson",
+      "status": "normal"
+    },
+    {
+      "time": "10:00-11:00",
+      "subject": "Chemistry",
+      "teacher": "Prof. Davis",
+      "status": "normal"
+    }
+  ],
+  "friday": [
+    {
+      "time": "9:00-10:00",
+      "subject": "English",
+      "teacher": "Ms. Wilson",
+      "status": "normal"
+    },
+    {
+      "time": "10:00-11:00",
+      "subject": "Mathematics",
+      "teacher": "Prof. Smith",
+      "status": "normal"
+    }
+  ]
+}
