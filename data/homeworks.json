@@ -104,5 +104,13 @@
     "description": "Implement the A* search algorithm to solve the 8-puzzle problem. Compare performance with BFS and DFS. Provide complexity analysis and test with multiple puzzle configurations.",
     "dueDate": "2025-01-16T23:59:59.000Z",
     "attachments": []
+  },
+  {
+    "id": 1754368521136,
+    "subject": "Mathematics 3",
+    "title": "Chapter III",
+    "description": "Complete everything",
+    "dueDate": "2025-08-15T00:00:00.000Z",
+    "attachments": []
   }
 ]
