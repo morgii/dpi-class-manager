@@ -8,13 +8,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-    .bangla-font {
-        font-family: 'Hind Siliguri', sans-serif;
-    }
-    
-    .english-font {
-        font-family: 'Inter', sans-serif;
-    }
+    .bangla-font { font-family: 'Hind Siliguri', sans-serif; }
+    .english-font { font-family: 'Inter', sans-serif; }
     
     * {
         -webkit-touch-callout: none;
@@ -32,33 +27,18 @@
         touch-action: manipulation;
     }
 
-    .no-scroll {
-        overflow: hidden;
-    }
-
-    .modal-backdrop {
-        backdrop-filter: blur(8px);
-    }
+    .no-scroll { overflow: hidden; }
+    .modal-backdrop { backdrop-filter: blur(8px); }
 
     .routine-cell {
         transition: all 0.3s ease;
-        background: linear-gradient(135deg, #14532d, #166534);
+        background: #14532d;
         border: 1px solid #15803d;
     }
 
-    .routine-cell:hover {
-        transform: translateY(-2px);
-    }
-
-    .routine-cell.cancelled {
-        background: linear-gradient(135deg, #374151, #4b5563);
-        border: 1px solid #6b7280;
-    }
-
-    .routine-cell.problem {
-        background: linear-gradient(135deg, #374151, #4b5563);
-        border: 1px solid #9ca3af;
-    }
+    .routine-cell:hover { transform: translateY(-2px); }
+    .routine-cell.cancelled { background: #374151; border: 1px solid #6b7280; }
+    .routine-cell.problem { background: #374151; border: 1px solid #9ca3af; }
 
     .floating-btn {
         position: fixed;
@@ -73,14 +53,8 @@
         border-top: 1px solid #15803d;
     }
 
-    .nav-item.active {
-        color: #15803d;
-    }
-
-    .card {
-        background: linear-gradient(135deg, #111827, #1f2937);
-        border: 1px solid #15803d;
-    }
+    .nav-item.active { color: #15803d; }
+    .card { background: #1f2937; border: 1px solid #15803d; }
 
     .loading-spinner {
         border: 4px solid #374151;
@@ -96,23 +70,10 @@
         100% { transform: rotate(360deg); }
     }
 
-    .admin-only {
-        display: none;
-    }
-
-    .admin-authenticated .admin-only {
-        display: block;
-    }
-
-    .success-message {
-        background: linear-gradient(135deg, #14532d, #166534);
-        border: 1px solid #15803d;
-    }
-
-    .error-message {
-        background: linear-gradient(135deg, #374151, #4b5563);
-        border: 1px solid #6b7280;
-    }
+    .admin-only { display: none; }
+    .admin-authenticated .admin-only { display: block; }
+    .success-message { background: #14532d; border: 1px solid #15803d; }
+    .error-message { background: #374151; border: 1px solid #6b7280; }
 
     .notification-badge {
         position: absolute;
@@ -129,14 +90,13 @@
         justify-content: center;
     }
 </style>
-
 </head>
 <body class="bg-black text-white min-h-screen pb-20 english-font">
     <!-- Header -->
-    <header class="bg-gray-900 shadow-lg sticky top-0 z-50 border-b border-orange-500">
+    <header class="bg-gray-900 shadow-lg sticky top-0 z-50 border-b border-green-500">
         <div class="max-w-md mx-auto px-4 py-4 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-orange-600 rounded-lg flex items-center justify-center">
+                <div class="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
                     <i class="fas fa-graduation-cap text-white"></i>
                 </div>
                 <div>
@@ -160,7 +120,7 @@
     <div id="loadingScreen" class="fixed inset-0 bg-black flex items-center justify-center z-50">
         <div class="text-center">
             <div class="loading-spinner mx-auto mb-4"></div>
-            <p class="text-orange-500">Loading data...</p>
+            <p class="text-green-500">Loading data...</p>
         </div>
     </div>
 
@@ -169,39 +129,33 @@
         <!-- Today's Classes -->
         <section class="space-y-4">
             <div class="flex items-center justify-between">
-                <h2 class="text-xl font-bold text-orange-500">Today's Classes</h2>
+                <h2 class="text-xl font-bold text-green-500">Today's Classes</h2>
                 <span class="text-sm text-gray-400" id="currentDate"></span>
             </div>
-            <div id="todayClasses" class="space-y-3">
-                <!-- Dynamic content -->
-            </div>
+            <div id="todayClasses" class="space-y-3"></div>
         </section>
 
         <!-- Daily Notices -->
         <section class="space-y-4" id="dailyNoticeSection">
-            <h2 class="text-xl font-bold text-orange-500">Daily Notices</h2>
-            <div id="dailyNotices" class="space-y-3">
-                <!-- Dynamic content -->
-            </div>
+            <h2 class="text-xl font-bold text-green-500">Daily Notices</h2>
+            <div id="dailyNotices" class="space-y-3"></div>
         </section>
 
         <!-- Announcements -->
         <section class="space-y-4">
-            <h2 class="text-xl font-bold text-orange-500">Announcements</h2>
-            <div id="announcements" class="space-y-3">
-                <!-- Dynamic content -->
-            </div>
+            <h2 class="text-xl font-bold text-green-500">Announcements</h2>
+            <div id="announcements" class="space-y-3"></div>
         </section>
 
         <!-- Quick Actions -->
         <section class="space-y-4">
-            <h2 class="text-xl font-bold text-orange-500">Quick Access</h2>
+            <h2 class="text-xl font-bold text-green-500">Quick Access</h2>
             <div class="grid grid-cols-2 gap-4">
-                <button onclick="navigateTo('routine')" class="bg-gradient-to-r from-orange-600 to-orange-700 p-4 rounded-lg flex flex-col items-center space-y-2 hover:scale-105 transition-transform border border-orange-500">
+                <button onclick="navigateTo('routine')" class="bg-green-600 p-4 rounded-lg flex flex-col items-center space-y-2 hover:scale-105 transition-transform border border-green-500">
                     <i class="fas fa-calendar-alt text-2xl"></i>
                     <span class="font-medium">Routine</span>
                 </button>
-                <button onclick="navigateTo('homeworks')" class="bg-gradient-to-r from-orange-600 to-orange-700 p-4 rounded-lg flex flex-col items-center space-y-2 hover:scale-105 transition-transform border border-orange-500">
+                <button onclick="navigateTo('homeworks')" class="bg-green-600 p-4 rounded-lg flex flex-col items-center space-y-2 hover:scale-105 transition-transform border border-green-500">
                     <i class="fas fa-book text-2xl"></i>
                     <span class="font-medium">Notes</span>
                 </button>
@@ -212,8 +166,8 @@
     <!-- Routine Page -->
     <div id="routinePage" class="hidden max-w-md mx-auto px-4 py-6">
         <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-bold text-orange-500">Class Routine</h2>
-            <button id="editRoutineBtn" class="admin-only text-orange-400 hover:text-orange-300">
+            <h2 class="text-2xl font-bold text-green-500">Class Routine</h2>
+            <button id="editRoutineBtn" class="admin-only text-green-400 hover:text-green-300">
                 <i class="fas fa-edit text-xl"></i>
             </button>
         </div>
@@ -230,27 +184,27 @@
         </div>
 
         <!-- Routine Table -->
-        <div id="routineContainer" class="space-y-3">
-            <!-- Dynamic content -->
-        </div>
+        <div id="routineContainer" class="space-y-3"></div>
+        
+        <!-- Add Class Button -->
+        <button id="addClassBtn" class="admin-only mt-4 w-full bg-green-600 hover:bg-green-700 p-3 rounded-lg border border-green-500">
+            <i class="fas fa-plus mr-2"></i> Add Class
+        </button>
     </div>
 
     <!-- Homeworks Page -->
     <div id="homeworksPage" class="hidden max-w-md mx-auto px-4 py-6">
         <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-bold text-orange-500">Notes & Homeworks</h2>
-            <button id="addHomeworkBtn" class="admin-only text-orange-400 hover:text-orange-300">
+            <h2 class="text-2xl font-bold text-green-500">Notes & Homeworks</h2>
+            <button id="addHomeworkBtn" class="admin-only text-green-400 hover:text-green-300">
                 <i class="fas fa-plus text-xl"></i>
             </button>
         </div>
-        
-        <div id="homeworksList" class="space-y-4">
-            <!-- Dynamic content -->
-        </div>
+        <div id="homeworksList" class="space-y-4"></div>
     </div>
 
     <!-- Floating Admin Button -->
-    <button id="floatingAdmin" class="floating-btn bg-orange-600 hover:bg-orange-700 text-white p-4 rounded-full shadow-lg transition-all duration-300 hidden border border-orange-500">
+    <button id="floatingAdmin" class="floating-btn bg-green-600 hover:bg-green-700 text-white p-4 rounded-full shadow-lg transition-all duration-300 hidden border border-green-500">
         <i class="fas fa-tools text-xl"></i>
     </button>
 
@@ -277,7 +231,7 @@
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="card rounded-lg p-6 w-full max-w-sm">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-bold text-orange-500">Admin Panel</h3>
+                    <h3 class="text-lg font-bold text-green-500">Admin Panel</h3>
                     <button class="close-modal text-gray-400 hover:text-white">
                         <i class="fas fa-times"></i>
                     </button>
@@ -289,29 +243,29 @@
                         <label class="block text-sm font-medium mb-2">GitHub Personal Access Token</label>
                         <input type="password" id="githubToken" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" placeholder="ghp_...">
                     </div>
-                    <button id="authenticateBtn" class="w-full bg-orange-600 hover:bg-orange-700 p-3 rounded-lg border border-orange-500">
+                    <button id="authenticateBtn" class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-lg border border-green-500">
                         <i class="fas fa-key mr-2"></i> Authenticate
                     </button>
                 </div>
                 
-                <!-- Admin Actions (Hidden until authenticated) -->
+                <!-- Admin Actions -->
                 <div id="adminActions" class="admin-only space-y-3">
-                    <div id="unsavedChanges" class="hidden bg-gray-800 p-3 rounded-lg border border-orange-500">
-                        <p class="text-orange-400 text-sm mb-2">
+                    <div id="unsavedChanges" class="hidden bg-gray-800 p-3 rounded-lg border border-green-500">
+                        <p class="text-green-400 text-sm mb-2">
                             <i class="fas fa-exclamation-triangle mr-2"></i>
                             You have unsaved changes!
                         </p>
-                        <button id="saveChangesBtn" class="w-full bg-orange-600 hover:bg-orange-700 p-2 rounded text-sm">
+                        <button id="saveChangesBtn" class="w-full bg-green-600 hover:bg-green-700 p-2 rounded text-sm">
                             Save Changes Now
                         </button>
                     </div>
-                    <button id="addAnnouncementBtn" class="w-full bg-orange-600 hover:bg-orange-700 p-3 rounded-lg text-left border border-orange-500">
+                    <button id="addAnnouncementBtn" class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-lg text-left border border-green-500">
                         <i class="fas fa-bullhorn mr-2"></i> Add Announcement
                     </button>
-                    <button id="addDailyNoticeBtn" class="w-full bg-orange-600 hover:bg-orange-700 p-3 rounded-lg text-left border border-orange-500">
+                    <button id="addDailyNoticeBtn" class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-lg text-left border border-green-500">
                         <i class="fas fa-edit mr-2"></i> Add Daily Notice
                     </button>
-                    <button id="manualCommitBtn" class="w-full bg-orange-600 hover:bg-orange-700 p-3 rounded-lg text-left border border-orange-500">
+                    <button id="manualCommitBtn" class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-lg text-left border border-green-500">
                         <i class="fab fa-github mr-2"></i> Commit to GitHub
                     </button>
                     <button id="logoutBtn" class="w-full bg-gray-600 hover:bg-gray-700 p-3 rounded-lg text-left border border-gray-500">
@@ -322,20 +276,17 @@
         </div>
     </div>
 
-    <!-- Add/Edit Content Modals -->
+    <!-- Content Modal -->
     <div id="contentModal" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop z-50 hidden">
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="card rounded-lg p-6 w-full max-w-sm max-h-96 overflow-y-auto">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 id="contentModalTitle" class="text-lg font-bold text-orange-500">Add Content</h3>
+                    <h3 id="contentModalTitle" class="text-lg font-bold text-green-500">Add Content</h3>
                     <button class="close-modal text-gray-400 hover:text-white">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
-                
-                <div id="contentForm" class="space-y-4">
-                    <!-- Dynamic form content -->
-                </div>
+                <div id="contentForm" class="space-y-4"></div>
             </div>
         </div>
     </div>
@@ -351,7 +302,6 @@
     </div>
 
     <script>
-        // Application state
         let appData = {
             routine: {},
             announcements: [],
@@ -365,11 +315,11 @@
         const GITHUB_REPO = 'morgii/dpi-class-manager';
         const DATA_BASE_URL = 'https://morgii.github.io/dpi-class-manager/data/';
         let dataFetchInterval;
+        let currentPage = 'home';
+        let selectedDay = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
 
-        // Utility functions
         function detectLanguage(text) {
-            const banglaRegex = /[\u0980-\u09FF]/;
-            return banglaRegex.test(text) ? 'bangla' : 'english';
+            return /[\u0980-\u09FF]/.test(text) ? 'bangla' : 'english';
         }
 
         function applyFontClass(element, text) {
@@ -384,7 +334,6 @@
             const messageEl = document.getElementById('toastMessage');
             
             toast.className = `fixed top-20 left-1/2 transform -translate-x-1/2 z-50 ${type === 'success' ? 'success-message' : 'error-message'} px-6 py-3 rounded-lg shadow-lg`;
-            
             icon.className = `fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}`;
             messageEl.textContent = message;
             
@@ -394,7 +343,7 @@
 
         function updateConnectionStatus(connected) {
             const status = document.getElementById('connectionStatus');
-            status.className = `w-3 h-3 rounded-full ${connected ? 'bg-orange-500' : 'bg-red-500'}`;
+            status.className = `w-3 h-3 rounded-full ${connected ? 'bg-green-500' : 'bg-red-500'}`;
         }
 
         function markUnsavedChanges() {
@@ -411,14 +360,10 @@
             document.getElementById('unsavedChanges').classList.add('hidden');
         }
 
-        // Data fetching functions
-        async function fetchDataFromGitHubPages(filename) {
+        async function fetchData(filename) {
             try {
                 const response = await fetch(`${DATA_BASE_URL}${filename}?t=${Date.now()}`);
-                if (response.ok) {
-                    return await response.json();
-                }
-                return null;
+                return response.ok ? await response.json() : null;
             } catch (error) {
                 console.error(`Error fetching ${filename}:`, error);
                 return null;
@@ -430,13 +375,12 @@
             
             try {
                 const [routine, announcements, homeworks, dailyNotices] = await Promise.all([
-                    fetchDataFromGitHubPages('routine.json'),
-                    fetchDataFromGitHubPages('announcements.json'),
-                    fetchDataFromGitHubPages('homeworks.json'),
-                    fetchDataFromGitHubPages('daily-notices.json')
+                    fetchData('routine.json'),
+                    fetchData('announcements.json'),
+                    fetchData('homeworks.json'),
+                    fetchData('daily-notices.json')
                 ]);
 
-                // Only update if we don't have unsaved changes
                 if (!appData.hasUnsavedChanges) {
                     appData.routine = routine || {};
                     appData.announcements = announcements || [];
@@ -449,21 +393,20 @@
             } catch (error) {
                 console.error('Error loading data:', error);
                 updateConnectionStatus(false);
-                showMessage('Failed to load data from server', 'error');
+                showMessage('Failed to load data', 'error');
             } finally {
                 document.getElementById('loadingScreen').classList.add('hidden');
             }
         }
 
-        // GitHub commit function (same as before but fixed)
         async function commitToGitHub(commitMessage = 'Update class data') {
             if (!appData.isAuthenticated) {
                 showMessage('Please authenticate first', 'error');
                 return;
             }
 
-            const loadingMsg = document.createElement('div');
-            loadingMsg.innerHTML = `
+            const loadingDiv = document.createElement('div');
+            loadingDiv.innerHTML = `
                 <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div class="card p-6 rounded-lg">
                         <div class="flex items-center space-x-3">
@@ -473,45 +416,35 @@
                     </div>
                 </div>
             `;
-            document.body.appendChild(loadingMsg);
+            document.body.appendChild(loadingDiv);
 
             try {
                 const files = {
                     'data/routine.json': JSON.stringify(appData.routine, null, 2),
                     'data/announcements.json': JSON.stringify(appData.announcements, null, 2),
                     'data/homeworks.json': JSON.stringify(appData.homeworks, null, 2),
-                    'data/daily-notices.json': JSON.stringify(appData.dailyNotices, null, 2),
-                    'data/last-sync.json': JSON.stringify({ 
-                        timestamp: new Date().toISOString(), 
-                        version: "2.1" 
-                    }, null, 2)
+                    'data/daily-notices.json': JSON.stringify(appData.dailyNotices, null, 2)
                 };
 
                 const baseUrl = `https://api.github.com/repos/${GITHUB_REPO}`;
                 const headers = {
                     'Authorization': `token ${appData.githubToken}`,
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/vnd.github.v3+json'
+                    'Content-Type': 'application/json'
                 };
 
-                // Get repository info
+                // Get current commit
                 const repoResponse = await fetch(baseUrl, { headers });
                 if (!repoResponse.ok) throw new Error('Repository access denied');
                 
                 const repoData = await repoResponse.json();
-                const defaultBranch = repoData.default_branch;
-
-                // Get current commit SHA
-                const refResponse = await fetch(`${baseUrl}/git/refs/heads/${defaultBranch}`, { headers });
+                const refResponse = await fetch(`${baseUrl}/git/refs/heads/${repoData.default_branch}`, { headers });
                 const refData = await refResponse.json();
-                const currentCommitSha = refData.object.sha;
+                const currentSha = refData.object.sha;
 
-                // Get current tree
-                const commitResponse = await fetch(`${baseUrl}/git/commits/${currentCommitSha}`, { headers });
+                const commitResponse = await fetch(`${baseUrl}/git/commits/${currentSha}`, { headers });
                 const commitData = await commitResponse.json();
-                const treeSha = commitData.tree.sha;
 
-                // Create blobs for each file
+                // Create blobs
                 const blobs = {};
                 for (const [path, content] of Object.entries(files)) {
                     const blobResponse = await fetch(`${baseUrl}/git/blobs`, {
@@ -526,56 +459,48 @@
                     blobs[path] = blobData.sha;
                 }
 
-                // Create new tree
-                const treeItems = Object.entries(blobs).map(([path, sha]) => ({
-                    path,
-                    mode: '100644',
-                    type: 'blob',
-                    sha
-                }));
-
-                const newTreeResponse = await fetch(`${baseUrl}/git/trees`, {
+                // Create tree
+                const treeResponse = await fetch(`${baseUrl}/git/trees`, {
                     method: 'POST',
                     headers,
                     body: JSON.stringify({
-                        base_tree: treeSha,
-                        tree: treeItems
+                        base_tree: commitData.tree.sha,
+                        tree: Object.entries(blobs).map(([path, sha]) => ({
+                            path, mode: '100644', type: 'blob', sha
+                        }))
                     })
                 });
-                const newTreeData = await newTreeResponse.json();
+                const treeData = await treeResponse.json();
 
-                // Create new commit
+                // Create commit
                 const newCommitResponse = await fetch(`${baseUrl}/git/commits`, {
                     method: 'POST',
                     headers,
                     body: JSON.stringify({
                         message: commitMessage,
-                        tree: newTreeData.sha,
-                        parents: [currentCommitSha]
+                        tree: treeData.sha,
+                        parents: [currentSha]
                     })
                 });
                 const newCommitData = await newCommitResponse.json();
 
                 // Update reference
-                await fetch(`${baseUrl}/git/refs/heads/${defaultBranch}`, {
+                await fetch(`${baseUrl}/git/refs/heads/${repoData.default_branch}`, {
                     method: 'PATCH',
                     headers,
-                    body: JSON.stringify({
-                        sha: newCommitData.sha
-                    })
+                    body: JSON.stringify({ sha: newCommitData.sha })
                 });
 
                 showMessage('Successfully committed to GitHub!');
                 clearUnsavedChanges();
             } catch (error) {
-                console.error('Error committing to GitHub:', error);
+                console.error('Error committing:', error);
                 showMessage(`Error: ${error.message}`, 'error');
             } finally {
-                document.body.removeChild(loadingMsg);
+                document.body.removeChild(loadingDiv);
             }
         }
 
-        // Authentication
         async function authenticate() {
             const token = document.getElementById('githubToken').value.trim();
             if (!token) {
@@ -585,10 +510,7 @@
 
             try {
                 const response = await fetch(`https://api.github.com/repos/${GITHUB_REPO}`, {
-                    headers: {
-                        'Authorization': `token ${token}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
+                    headers: { 'Authorization': `token ${token}` }
                 });
 
                 if (response.ok) {
@@ -602,7 +524,7 @@
                         document.getElementById('unsavedChanges').classList.remove('hidden');
                     }
                 } else {
-                    throw new Error('Invalid token or repository access denied');
+                    throw new Error('Invalid token');
                 }
             } catch (error) {
                 showMessage(error.message, 'error');
@@ -610,11 +532,7 @@
         }
 
         function logout() {
-            if (appData.hasUnsavedChanges) {
-                if (!confirm('You have unsaved changes. Are you sure you want to logout?')) {
-                    return;
-                }
-            }
+            if (appData.hasUnsavedChanges && !confirm('You have unsaved changes. Logout anyway?')) return;
             
             appData.isAuthenticated = false;
             appData.githubToken = '';
@@ -622,11 +540,8 @@
             document.getElementById('authSection').style.display = 'block';
             document.getElementById('githubToken').value = '';
             clearUnsavedChanges();
-            showMessage('Logged out successfully');
+            showMessage('Logged out');
         }
-
-        // Navigation
-        let currentPage = 'home';
 
         function navigateTo(page) {
             document.getElementById('mainContent').classList.add('hidden');
@@ -643,44 +558,31 @@
                 renderHomeworksPage();
             }
 
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             document.querySelector(`[data-page="${page}"]`).classList.add('active');
-
             currentPage = page;
         }
 
         function renderCurrentPage() {
-            if (currentPage === 'home') {
-                renderHomePage();
-            } else if (currentPage === 'routine') {
-                renderRoutinePage();
-            } else if (currentPage === 'homeworks') {
-                renderHomeworksPage();
-            }
+            if (currentPage === 'home') renderHomePage();
+            else if (currentPage === 'routine') renderRoutinePage();
+            else if (currentPage === 'homeworks') renderHomeworksPage();
         }
 
-        // Render functions
         function renderHomePage() {
-            // Set current date
             const today = new Date();
             document.getElementById('currentDate').textContent = today.toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
             });
 
-            // Render today's classes
             const dayName = today.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
             const todayClasses = appData.routine[dayName] || [];
             
             const todayClassesHTML = todayClasses.length > 0 
                 ? todayClasses.map(cls => {
-                    const classDiv = document.createElement('div');
-                    classDiv.className = `routine-cell ${cls.status || 'normal'} p-4 rounded-lg text-white`;
-                    classDiv.innerHTML = `
+                    const div = document.createElement('div');
+                    div.className = `routine-cell ${cls.status || 'normal'} p-4 rounded-lg text-white`;
+                    div.innerHTML = `
                         <div class="flex justify-between items-start">
                             <div class="flex-1">
                                 <h4 class="font-semibold">${cls.subject}</h4>
@@ -689,44 +591,44 @@
                             </div>
                             <span class="text-xs bg-black bg-opacity-20 px-2 py-1 rounded">${cls.time}</span>
                         </div>
-                        ${cls.status === 'cancelled' ? '<p class="text-xs mt-2 opacity-75">Class Cancelled</p>' : ''}
-                        ${cls.status === 'problem' ? '<p class="text-xs mt-2 opacity-75">Schedule Change</p>' : ''}
+                        ${cls.status === 'cancelled' ? '<p class="text-xs mt-2 opacity-75">Cancelled</p>' : ''}
+                        ${cls.status === 'problem' ? '<p class="text-xs mt-2 opacity-75">Changed</p>' : ''}
                     `;
-                    applyFontClass(classDiv, cls.subject + cls.teacher);
-                    return classDiv.outerHTML;
+                    applyFontClass(div, cls.subject + cls.teacher);
+                    return div.outerHTML;
                 }).join('')
-                : '<p class="text-gray-400 text-center py-8">No classes scheduled for today</p>';
+                : '<p class="text-gray-400 text-center py-8">No classes today</p>';
 
             document.getElementById('todayClasses').innerHTML = todayClassesHTML;
 
-            // Render daily notices
+            // Daily notices
             const noticesHTML = appData.dailyNotices.length > 0
                 ? appData.dailyNotices.slice(0, 3).map(notice => {
-                    const noticeDiv = document.createElement('div');
-                    noticeDiv.className = 'card p-4 rounded-lg';
-                    noticeDiv.innerHTML = `
+                    const div = document.createElement('div');
+                    div.className = 'card p-4 rounded-lg';
+                    div.innerHTML = `
                         <p class="text-sm">${notice.content}</p>
                         <span class="text-xs text-gray-400 mt-2 block">${new Date(notice.date).toLocaleDateString()}</span>
                     `;
-                    applyFontClass(noticeDiv, notice.content);
-                    return noticeDiv.outerHTML;
+                    applyFontClass(div, notice.content);
+                    return div.outerHTML;
                 }).join('')
-                : '<p class="text-gray-400 text-center py-8">No daily notices</p>';
+                : '<p class="text-gray-400 text-center py-8">No notices</p>';
 
             document.getElementById('dailyNotices').innerHTML = noticesHTML;
 
-            // Render announcements
+            // Announcements
             const announcementsHTML = appData.announcements.length > 0
                 ? appData.announcements.slice(0, 3).map(announcement => {
-                    const announcementDiv = document.createElement('div');
-                    announcementDiv.className = 'card p-4 rounded-lg border-l-4 border-orange-500';
-                    announcementDiv.innerHTML = `
+                    const div = document.createElement('div');
+                    div.className = 'card p-4 rounded-lg border-l-4 border-green-500';
+                    div.innerHTML = `
                         <h4 class="font-semibold mb-2">${announcement.title}</h4>
                         <p class="text-sm text-gray-300 mb-2">${announcement.content}</p>
                         <span class="text-xs text-gray-400">${new Date(announcement.date).toLocaleDateString()}</span>
                     `;
-                    applyFontClass(announcementDiv, announcement.title + announcement.content);
-                    return announcementDiv.outerHTML;
+                    applyFontClass(div, announcement.title + announcement.content);
+                    return div.outerHTML;
                 }).join('')
                 : '<p class="text-gray-400 text-center py-8">No announcements</p>';
 
@@ -738,28 +640,29 @@
             
             // Highlight current day
             document.querySelectorAll('.day-btn').forEach(btn => {
-                btn.classList.remove('bg-orange-600', 'text-white', 'border-orange-500');
+                btn.classList.remove('bg-green-600', 'text-white', 'border-green-500');
                 btn.classList.add('bg-gray-800', 'text-gray-300', 'border-gray-600');
                 
                 if (btn.dataset.day === today) {
                     btn.classList.remove('bg-gray-800', 'text-gray-300', 'border-gray-600');
-                    btn.classList.add('bg-orange-600', 'text-white', 'border-orange-500');
+                    btn.classList.add('bg-green-600', 'text-white', 'border-green-500');
+                    selectedDay = today;
                 }
             });
 
-            renderRoutineForDay(today);
+            renderRoutineForDay(selectedDay);
         }
 
         function renderRoutineForDay(day) {
             const classes = appData.routine[day] || [];
             const routineHTML = classes.length > 0
                 ? classes.map((cls, index) => {
-                    const classDiv = document.createElement('div');
-                    classDiv.className = `routine-cell ${cls.status || 'normal'} p-4 rounded-lg text-white ${appData.isAuthenticated ? 'cursor-pointer' : ''}`;
+                    const div = document.createElement('div');
+                    div.className = `routine-cell ${cls.status || 'normal'} p-4 rounded-lg text-white ${appData.isAuthenticated ? 'cursor-pointer' : ''}`;
                     if (appData.isAuthenticated) {
-                        classDiv.onclick = () => editClass(day, index);
+                        div.onclick = () => editClass(day, index);
                     }
-                    classDiv.innerHTML = `
+                    div.innerHTML = `
                         <div class="flex justify-between items-start">
                             <div class="flex-1">
                                 <h4 class="font-semibold">${cls.subject}</h4>
@@ -768,11 +671,11 @@
                             </div>
                             <span class="text-xs bg-black bg-opacity-20 px-2 py-1 rounded">${cls.time}</span>
                         </div>
-                        ${cls.status === 'cancelled' ? '<p class="text-xs mt-2 opacity-75">Class Cancelled</p>' : ''}
-                        ${cls.status === 'problem' ? '<p class="text-xs mt-2 opacity-75">Schedule Change</p>' : ''}
+                        ${cls.status === 'cancelled' ? '<p class="text-xs mt-2 opacity-75">Cancelled</p>' : ''}
+                        ${cls.status === 'problem' ? '<p class="text-xs mt-2 opacity-75">Changed</p>' : ''}
                     `;
-                    applyFontClass(classDiv, cls.subject + cls.teacher);
-                    return classDiv.outerHTML;
+                    applyFontClass(div, cls.subject + cls.teacher);
+                    return div.outerHTML;
                 }).join('')
                 : '<p class="text-gray-400 text-center py-8">No classes scheduled</p>';
 
@@ -782,25 +685,25 @@
         function renderHomeworksPage() {
             const homeworksHTML = appData.homeworks.length > 0
                 ? appData.homeworks.map(hw => {
-                    const hwDiv = document.createElement('div');
-                    hwDiv.className = 'card p-4 rounded-lg';
-                    hwDiv.innerHTML = `
+                    const div = document.createElement('div');
+                    div.className = 'card p-4 rounded-lg';
+                    div.innerHTML = `
                         <div class="flex justify-between items-start mb-3">
                             <div>
                                 <h4 class="font-semibold">${hw.title}</h4>
-                                <p class="text-sm text-orange-400">${hw.subject}</p>
+                                <p class="text-sm text-green-400">${hw.subject}</p>
                             </div>
                             ${appData.isAuthenticated ? `<button onclick="editHomework(${hw.id})" class="text-gray-400 hover:text-white"><i class="fas fa-edit"></i></button>` : ''}
                         </div>
                         <p class="text-sm text-gray-300 mb-3">${hw.description}</p>
                         <div class="flex items-center justify-between text-xs">
                             <span class="text-gray-400">Due: ${new Date(hw.dueDate).toLocaleDateString()}</span>
-                            ${hw.attachments && hw.attachments.length > 0 ? `<span class="text-orange-400"><i class="fas fa-paperclip mr-1"></i>${hw.attachments.length} files</span>` : ''}
+                            ${hw.attachments && hw.attachments.length > 0 ? `<span class="text-green-400"><i class="fas fa-paperclip mr-1"></i>${hw.attachments.length} files</span>` : ''}
                         </div>
                         ${hw.attachments && hw.attachments.length > 0 ? `
                             <div class="mt-3 space-y-2">
                                 ${hw.attachments.map(att => `
-                                    <a href="${att.url}" target="_blank" class="block text-orange-400 hover:text-orange-300 text-sm">
+                                    <a href="${att.url}" target="_blank" class="block text-green-400 hover:text-green-300 text-sm">
                                         <i class="fas ${att.type === 'pdf' ? 'fa-file-pdf' : 'fa-image'} mr-2"></i>
                                         ${att.type === 'pdf' ? 'PDF Document' : 'Image'}
                                     </a>
@@ -808,15 +711,14 @@
                             </div>
                         ` : ''}
                     `;
-                    applyFontClass(hwDiv, hw.title + hw.description);
-                    return hwDiv.outerHTML;
+                    applyFontClass(div, hw.title + hw.description);
+                    return div.outerHTML;
                 }).join('')
-                : '<p class="text-gray-400 text-center py-8">No homeworks assigned</p>';
+                : '<p class="text-gray-400 text-center py-8">No homeworks</p>';
 
             document.getElementById('homeworksList').innerHTML = homeworksHTML;
         }
 
-        // Modal management
         function showModal(modalId) {
             document.getElementById(modalId).classList.remove('hidden');
             document.body.classList.add('no-scroll');
@@ -833,7 +735,6 @@
             showModal('contentModal');
         }
 
-        // Admin functions
         function editClass(day, index) {
             const cls = appData.routine[day][index];
             const formHTML = `
@@ -850,7 +751,7 @@
                     <input type="text" id="editClassTime" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" value="${cls.time}">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium mb-2">Classroom (Optional)</label>
+                    <label class="block text-sm font-medium mb-2">Classroom</label>
                     <input type="text" id="editClassroom" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" value="${cls.classroom || ''}" placeholder="e.g. 412, 414/A">
                 </div>
                 <div>
@@ -858,16 +759,12 @@
                     <select id="classStatus" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white">
                         <option value="normal" ${(cls.status || 'normal') === 'normal' ? 'selected' : ''}>Normal</option>
                         <option value="cancelled" ${cls.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
-                        <option value="problem" ${cls.status === 'problem' ? 'selected' : ''}>Problem/Change</option>
+                        <option value="problem" ${cls.status === 'problem' ? 'selected' : ''}>Problem</option>
                     </select>
                 </div>
                 <div class="flex space-x-2">
-                    <button onclick="updateClass('${day}', ${index})" class="flex-1 bg-orange-600 hover:bg-orange-700 p-3 rounded-lg border border-orange-500">
-                        Update
-                    </button>
-                    <button onclick="deleteClass('${day}', ${index})" class="flex-1 bg-gray-600 hover:bg-gray-700 p-3 rounded-lg border border-gray-500">
-                        Delete
-                    </button>
+                    <button onclick="updateClass('${day}', ${index})" class="flex-1 bg-green-600 hover:bg-green-700 p-3 rounded-lg border border-green-500">Update</button>
+                    <button onclick="deleteClass('${day}', ${index})" class="flex-1 bg-gray-600 hover:bg-gray-700 p-3 rounded-lg border border-gray-500">Delete</button>
                 </div>
             `;
             showContentModal('Edit Class', formHTML);
@@ -882,12 +779,9 @@
             
             if (subject && teacher && time) {
                 appData.routine[day][index] = {
-                    ...appData.routine[day][index],
-                    subject,
-                    teacher,
-                    time,
-                    classroom: classroom || undefined,
-                    status
+                    subject, teacher, time, 
+                    classroom: classroom || null,
+                    status: status !== 'normal' ? status : null
                 };
                 hideModal('contentModal');
                 renderCurrentPage();
@@ -897,7 +791,7 @@
         }
 
         function deleteClass(day, index) {
-            if (confirm('Are you sure you want to delete this class?')) {
+            if (confirm('Delete this class?')) {
                 appData.routine[day].splice(index, 1);
                 hideModal('contentModal');
                 renderCurrentPage();
@@ -906,19 +800,72 @@
             }
         }
 
+        function addClass() {
+            const formHTML = `
+                <div>
+                    <label class="block text-sm font-medium mb-2">Day</label>
+                    <select id="newClassDay" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white">
+                        <option value="sunday">Sunday</option>
+                        <option value="monday">Monday</option>
+                        <option value="tuesday">Tuesday</option>
+                        <option value="wednesday">Wednesday</option>
+                        <option value="thursday">Thursday</option>
+                        <option value="friday">Friday</option>
+                        <option value="saturday">Saturday</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Subject</label>
+                    <input type="text" id="newClassSubject" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" placeholder="Subject">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Teacher</label>
+                    <input type="text" id="newClassTeacher" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" placeholder="Teacher">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Time</label>
+                    <input type="text" id="newClassTime" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" placeholder="e.g. 9:00-10:00">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Classroom</label>
+                    <input type="text" id="newClassroom" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" placeholder="e.g. 412">
+                </div>
+                <button onclick="saveNewClass()" class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-lg border border-green-500">Add Class</button>
+            `;
+            showContentModal('Add Class', formHTML);
+        }
+
+        function saveNewClass() {
+            const day = document.getElementById('newClassDay').value;
+            const subject = document.getElementById('newClassSubject').value.trim();
+            const teacher = document.getElementById('newClassTeacher').value.trim();
+            const time = document.getElementById('newClassTime').value.trim();
+            const classroom = document.getElementById('newClassroom').value.trim();
+            
+            if (subject && teacher && time) {
+                if (!appData.routine[day]) appData.routine[day] = [];
+                appData.routine[day].push({
+                    subject, teacher, time,
+                    classroom: classroom || null
+                });
+                hideModal('contentModal');
+                renderCurrentPage();
+                markUnsavedChanges();
+                showMessage('Class added');
+            }
+        }
+
         function addAnnouncement() {
             const formHTML = `
                 <div>
                     <label class="block text-sm font-medium mb-2">Title</label>
-                    <input type="text" id="announcementTitle" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" placeholder="Announcement title">
+                    <input type="text" id="announcementTitle" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" placeholder="Title">
                 </div>
                 <div>
                     <label class="block text-sm font-medium mb-2">Content</label>
-                    <textarea id="announcementContent" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white h-24" placeholder="Announcement content"></textarea>
+                    <textarea id="announcementContent" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white h-24" placeholder="Content"></textarea>
                 </div>
-                <button onclick="saveAnnouncement()" class="w-full bg-orange-600 hover:bg-orange-700 p-3 rounded-lg border border-orange-500">
-                    Add Announcement
-                </button>
+                <button onclick="saveAnnouncement()" class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-lg border border-green-500">Add</button>
             `;
             showContentModal('Add Announcement', formHTML);
         }
@@ -929,9 +876,7 @@
             
             if (title && content) {
                 appData.announcements.unshift({
-                    id: Date.now(),
-                    title,
-                    content,
+                    id: Date.now(), title, content,
                     date: new Date().toISOString()
                 });
                 hideModal('contentModal');
@@ -944,12 +889,10 @@
         function addDailyNotice() {
             const formHTML = `
                 <div>
-                    <label class="block text-sm font-medium mb-2">Daily Notice</label>
-                    <textarea id="dailyNoticeText" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white h-24" placeholder="Daily notice content"></textarea>
+                    <label class="block text-sm font-medium mb-2">Notice</label>
+                    <textarea id="dailyNoticeText" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white h-24" placeholder="Notice content"></textarea>
                 </div>
-                <button onclick="saveDailyNotice()" class="w-full bg-orange-600 hover:bg-orange-700 p-3 rounded-lg border border-orange-500">
-                    Add Notice
-                </button>
+                <button onclick="saveDailyNotice()" class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-lg border border-green-500">Add</button>
             `;
             showContentModal('Add Daily Notice', formHTML);
         }
@@ -959,14 +902,13 @@
             
             if (content) {
                 appData.dailyNotices.unshift({
-                    id: Date.now(),
-                    content,
+                    id: Date.now(), content,
                     date: new Date().toISOString()
                 });
                 hideModal('contentModal');
                 renderCurrentPage();
                 markUnsavedChanges();
-                showMessage('Daily notice added');
+                showMessage('Notice added');
             }
         }
 
@@ -978,27 +920,25 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium mb-2">Title</label>
-                    <input type="text" id="homeworkTitle" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" placeholder="Homework title">
+                    <input type="text" id="homeworkTitle" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" placeholder="Title">
                 </div>
                 <div>
                     <label class="block text-sm font-medium mb-2">Description</label>
-                    <textarea id="homeworkDescription" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white h-20" placeholder="Homework description"></textarea>
+                    <textarea id="homeworkDescription" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white h-20" placeholder="Description"></textarea>
                 </div>
                 <div>
                     <label class="block text-sm font-medium mb-2">Due Date</label>
                     <input type="date" id="homeworkDueDate" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium mb-2">PDF Link (Optional)</label>
+                    <label class="block text-sm font-medium mb-2">PDF Link</label>
                     <input type="url" id="homeworkPdfLink" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" placeholder="https://...">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium mb-2">Image Link (Optional)</label>
+                    <label class="block text-sm font-medium mb-2">Image Link</label>
                     <input type="url" id="homeworkImageLink" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" placeholder="https://...">
                 </div>
-                <button onclick="saveHomework()" class="w-full bg-orange-600 hover:bg-orange-700 p-3 rounded-lg border border-orange-500">
-                    Add Homework
-                </button>
+                <button onclick="saveHomework()" class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-lg border border-green-500">Add</button>
             `;
             showContentModal('Add Homework', formHTML);
         }
@@ -1017,10 +957,7 @@
                 if (imageLink) attachments.push({ type: 'image', url: imageLink });
                 
                 appData.homeworks.push({
-                    id: Date.now(),
-                    subject,
-                    title,
-                    description,
+                    id: Date.now(), subject, title, description,
                     dueDate: new Date(dueDate).toISOString(),
                     attachments
                 });
@@ -1032,42 +969,38 @@
         }
 
         function editHomework(id) {
-            const homework = appData.homeworks.find(hw => hw.id === id);
-            const pdfAttachment = homework.attachments?.find(att => att.type === 'pdf');
-            const imageAttachment = homework.attachments?.find(att => att.type === 'image');
+            const hw = appData.homeworks.find(h => h.id === id);
+            const pdf = hw.attachments?.find(a => a.type === 'pdf');
+            const img = hw.attachments?.find(a => a.type === 'image');
             
             const formHTML = `
                 <div>
                     <label class="block text-sm font-medium mb-2">Subject</label>
-                    <input type="text" id="editHomeworkSubject" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" value="${homework.subject}">
+                    <input type="text" id="editHomeworkSubject" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" value="${hw.subject}">
                 </div>
                 <div>
                     <label class="block text-sm font-medium mb-2">Title</label>
-                    <input type="text" id="editHomeworkTitle" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" value="${homework.title}">
+                    <input type="text" id="editHomeworkTitle" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" value="${hw.title}">
                 </div>
                 <div>
                     <label class="block text-sm font-medium mb-2">Description</label>
-                    <textarea id="editHomeworkDescription" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white h-20">${homework.description}</textarea>
+                    <textarea id="editHomeworkDescription" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white h-20">${hw.description}</textarea>
                 </div>
                 <div>
                     <label class="block text-sm font-medium mb-2">Due Date</label>
-                    <input type="date" id="editHomeworkDueDate" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" value="${new Date(homework.dueDate).toISOString().split('T')[0]}">
+                    <input type="date" id="editHomeworkDueDate" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" value="${new Date(hw.dueDate).toISOString().split('T')[0]}">
                 </div>
                 <div>
                     <label class="block text-sm font-medium mb-2">PDF Link</label>
-                    <input type="url" id="editHomeworkPdfLink" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" value="${pdfAttachment ? pdfAttachment.url : ''}">
+                    <input type="url" id="editHomeworkPdfLink" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" value="${pdf ? pdf.url : ''}">
                 </div>
                 <div>
                     <label class="block text-sm font-medium mb-2">Image Link</label>
-                    <input type="url" id="editHomeworkImageLink" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" value="${imageAttachment ? imageAttachment.url : ''}">
+                    <input type="url" id="editHomeworkImageLink" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" value="${img ? img.url : ''}">
                 </div>
                 <div class="flex space-x-2">
-                    <button onclick="updateHomework(${id})" class="flex-1 bg-orange-600 hover:bg-orange-700 p-3 rounded-lg border border-orange-500">
-                        Update
-                    </button>
-                    <button onclick="deleteHomework(${id})" class="flex-1 bg-gray-600 hover:bg-gray-700 p-3 rounded-lg border border-gray-500">
-                        Delete
-                    </button>
+                    <button onclick="updateHomework(${id})" class="flex-1 bg-green-600 hover:bg-green-700 p-3 rounded-lg border border-green-500">Update</button>
+                    <button onclick="deleteHomework(${id})" class="flex-1 bg-gray-600 hover:bg-gray-700 p-3 rounded-lg border border-gray-500">Delete</button>
                 </div>
             `;
             showContentModal('Edit Homework', formHTML);
@@ -1081,17 +1014,15 @@
             const pdfLink = document.getElementById('editHomeworkPdfLink').value.trim();
             const imageLink = document.getElementById('editHomeworkImageLink').value.trim();
             
-            const homeworkIndex = appData.homeworks.findIndex(hw => hw.id === id);
-            if (homeworkIndex !== -1) {
+            const index = appData.homeworks.findIndex(hw => hw.id === id);
+            if (index !== -1) {
                 const attachments = [];
                 if (pdfLink) attachments.push({ type: 'pdf', url: pdfLink });
                 if (imageLink) attachments.push({ type: 'image', url: imageLink });
                 
-                appData.homeworks[homeworkIndex] = {
-                    ...appData.homeworks[homeworkIndex],
-                    subject,
-                    title,
-                    description,
+                appData.homeworks[index] = {
+                    ...appData.homeworks[index],
+                    subject, title, description,
                     dueDate: new Date(dueDate).toISOString(),
                     attachments
                 };
@@ -1103,7 +1034,7 @@
         }
 
         function deleteHomework(id) {
-            if (confirm('Are you sure you want to delete this homework?')) {
+            if (confirm('Delete this homework?')) {
                 appData.homeworks = appData.homeworks.filter(hw => hw.id !== id);
                 hideModal('contentModal');
                 renderCurrentPage();
@@ -1115,33 +1046,31 @@
         // Event listeners
         document.addEventListener('DOMContentLoaded', function() {
             loadAllData();
-
-            // Set up auto-refresh every 30 seconds
-            dataFetchInterval = setInterval(loadAllData, 30000);
+            dataFetchInterval = setInterval(loadAllData, 60000); // 1 minute
 
             // Navigation
             document.querySelectorAll('.nav-item').forEach(item => {
-                item.addEventListener('click', function() {
-                    navigateTo(this.dataset.page);
-                });
+                item.addEventListener('click', () => navigateTo(item.dataset.page));
             });
 
             // Day buttons
             document.querySelectorAll('.day-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
+                    selectedDay = this.dataset.day;
                     document.querySelectorAll('.day-btn').forEach(b => {
-                        b.classList.remove('bg-orange-600', 'text-white', 'border-orange-500');
+                        b.classList.remove('bg-green-600', 'text-white', 'border-green-500');
                         b.classList.add('bg-gray-800', 'text-gray-300', 'border-gray-600');
                     });
                     this.classList.remove('bg-gray-800', 'text-gray-300', 'border-gray-600');
-                    this.classList.add('bg-orange-600', 'text-white', 'border-orange-500');
-                    renderRoutineForDay(this.dataset.day);
+                    this.classList.add('bg-green-600', 'text-white', 'border-green-500');
+                    renderRoutineForDay(selectedDay);
                 });
             });
 
-            // Modal triggers
+            // Modal handlers
             document.getElementById('adminBtn').addEventListener('click', () => showModal('adminModal'));
             document.getElementById('floatingAdmin').addEventListener('click', () => showModal('adminModal'));
+            document.getElementById('addClassBtn').addEventListener('click', addClass);
             document.getElementById('addHomeworkBtn').addEventListener('click', addHomework);
             document.getElementById('addAnnouncementBtn').addEventListener('click', addAnnouncement);
             document.getElementById('addDailyNoticeBtn').addEventListener('click', addDailyNotice);
@@ -1158,60 +1087,47 @@
                 });
             });
 
-            // Close modals on backdrop click
             document.querySelectorAll('[id$="Modal"]').forEach(modal => {
                 modal.addEventListener('click', function(e) {
-                    if (e.target === this) {
-                        hideModal(this.id);
-                    }
+                    if (e.target === this) hideModal(this.id);
                 });
             });
 
-            // Show floating admin button on scroll
+            // Floating admin button
             let scrollTimeout;
             window.addEventListener('scroll', function() {
                 if (appData.isAuthenticated) {
                     clearTimeout(scrollTimeout);
                     document.getElementById('floatingAdmin').classList.remove('hidden');
-                    
-                    scrollTimeout = setTimeout(function() {
+                    scrollTimeout = setTimeout(() => {
                         document.getElementById('floatingAdmin').classList.add('hidden');
                     }, 3000);
                 }
             });
 
-            // Warn before leaving if unsaved changes
+            // Prevent leaving with unsaved changes
             window.addEventListener('beforeunload', function(e) {
                 if (appData.hasUnsavedChanges) {
                     e.preventDefault();
-                    e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+                    e.returnValue = 'You have unsaved changes!';
                 }
-                if (dataFetchInterval) {
-                    clearInterval(dataFetchInterval);
-                }
+                if (dataFetchInterval) clearInterval(dataFetchInterval);
             });
 
-            // Prevent zoom and drag
+            // Prevent zoom/gestures
             document.addEventListener('touchstart', function(e) {
-                if (e.touches.length > 1) {
-                    e.preventDefault();
-                }
+                if (e.touches.length > 1) e.preventDefault();
             }, { passive: false });
 
             let lastTouchEnd = 0;
             document.addEventListener('touchend', function(e) {
-                const now = (new Date()).getTime();
-                if (now - lastTouchEnd <= 300) {
-                    e.preventDefault();
-                }
+                const now = Date.now();
+                if (now - lastTouchEnd <= 300) e.preventDefault();
                 lastTouchEnd = now;
             }, false);
 
-            // Disable gestures
             ['gesturestart', 'gesturechange', 'gestureend'].forEach(event => {
-                document.addEventListener(event, function(e) {
-                    e.preventDefault();
-                });
+                document.addEventListener(event, e => e.preventDefault());
             });
         });
     </script>
