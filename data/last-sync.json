@@ -1,62 +1,25 @@
 {
-  "sunday": [],
-  "monday": [
+  "timestamp": "2025-01-04T15:30:45.123Z",
+  "version": "2.1",
+  "lastUpdatedBy": "admin",
+  "totalChanges": 3,
+  "changes": [
     {
-      "time": "8:00-9:00",
-      "subject": "গণিত (Mathematics)",
-      "teacher": "জনাব আহমেদ (Mr. Ahmed)",
-      "status": "normal"
+      "type": "announcement",
+      "action": "added",
+      "title": "Mid-Term Exam Schedule Released"
     },
     {
-      "time": "9:00-10:00", 
-      "subject": "পদার্থবিজ্ঞান (Physics)",
-      "teacher": "ড. রহমান (Dr. Rahman)",
-      "status": "normal"
+      "type": "routine",
+      "action": "modified",
+      "day": "monday",
+      "subject": "Operating Systems",
+      "change": "status changed to problem"
     },
     {
-      "time": "10:00-11:00",
-      "subject": "রসায়ন (Chemistry)", 
-      "teacher": "মিসেস খান (Mrs. Khan)",
-      "status": "normal"
+      "type": "daily_notice",
+      "action": "added",
+      "content": "Today's Computer Networks lab moved to Lab-4"
     }
-  ],
-  "tuesday": [
-    {
-      "time": "8:00-9:00",
-      "subject": "ইংরেজি (English)",
-      "teacher": "মিস ফাতিমা (Miss Fatima)",
-      "status": "normal"
-    },
-    {
-      "time": "9:00-10:00",
-      "subject": "বাংলা (Bangla)",
-      "teacher": "জনাব করিম (Mr. Karim)",
-      "status": "normal"
-    }
-  ],
-  "wednesday": [
-    {
-      "time": "8:00-9:00",
-      "subject": "কম্পিউটার সায়েন্স (Computer Science)",
-      "teacher": "জনাব হাসান (Mr. Hasan)",
-      "status": "normal"
-    }
-  ],
-  "thursday": [
-    {
-      "time": "8:00-9:00",
-      "subject": "জীববিজ্ঞান (Biology)",
-      "teacher": "ড. বেগম (Dr. Begum)",
-      "status": "normal"
-    }
-  ],
-  "friday": [
-    {
-      "time": "8:00-9:00",
-      "subject": "ইতিহাস (History)",
-      "teacher": "জনাব আলী (Mr. Ali)",
-      "status": "normal"
-    }
-  ],
-  "saturday": []
+  ]
 }

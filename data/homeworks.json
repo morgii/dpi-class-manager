@@ -1,11 +1,108 @@
 [
   {
-    "id": 1,
-    "subject": "Mathematics",
-    "title": "Algebra Practice",
-    "description": "Complete exercises 1-20 from chapter 5",
-    "dueDate": "2025-08-11T16:27:25.422Z",
-    "type": "text",
+    "id": 1735987200001,
+    "subject": "Database Management",
+    "title": "ER Diagram Design Assignment",
+    "description": "Create a complete ER diagram for a university management system including students, courses, faculty, and departments. Include all relationships, cardinalities, and constraints.",
+    "dueDate": "2025-01-15T23:59:59.000Z",
+    "attachments": [
+      {
+        "type": "pdf",
+        "url": "https://example.com/assignments/db-assignment-1.pdf"
+      },
+      {
+        "type": "image",
+        "url": "https://example.com/sample-diagrams/er-example.png"
+      }
+    ]
+  },
+  {
+    "id": 1735987200002,
+    "subject": "Web Development",
+    "title": "Responsive Portfolio Website",
+    "description": "Build a fully responsive personal portfolio website using HTML5, CSS3, and JavaScript. Must include: About, Projects, Skills, and Contact sections. Use Bootstrap or CSS Grid for layout.",
+    "dueDate": "2025-01-20T23:59:59.000Z",
+    "attachments": [
+      {
+        "type": "pdf",
+        "url": "https://example.com/assignments/web-portfolio-requirements.pdf"
+      }
+    ]
+  },
+  {
+    "id": 1735987200003,
+    "subject": "Data Structures",
+    "title": "Binary Search Tree Implementation",
+    "description": "Implement a complete Binary Search Tree in C++ with insert, delete, search, and traversal operations. Include proper memory management and handle edge cases.",
+    "dueDate": "2025-01-12T23:59:59.000Z",
+    "attachments": []
+  },
+  {
+    "id": 1735987200004,
+    "subject": "Machine Learning",
+    "title": "Linear Regression Analysis",
+    "description": "Perform linear regression analysis on the provided housing dataset. Create visualizations, calculate R-squared values, and interpret results. Use Python with pandas, numpy, and matplotlib.",
+    "dueDate": "2025-01-18T23:59:59.000Z",
+    "attachments": [
+      {
+        "type": "pdf",
+        "url": "https://example.com/datasets/housing-data-description.pdf"
+      },
+      {
+        "type": "image",
+        "url": "https://example.com/examples/regression-sample-output.png"
+      }
+    ]
+  },
+  {
+    "id": 1735987200005,
+    "subject": "Software Engineering",
+    "title": "Software Requirements Document (SRD)",
+    "description": "Write a comprehensive Software Requirements Document for a library management system. Include functional requirements, non-functional requirements, use cases, and system architecture.",
+    "dueDate": "2025-01-25T23:59:59.000Z",
+    "attachments": [
+      {
+        "type": "pdf",
+        "url": "https://example.com/templates/srd-template.pdf"
+      }
+    ]
+  },
+  {
+    "id": 1735987200006,
+    "subject": "Computer Networks",
+    "title": "Network Protocol Analysis",
+    "description": "Analyze TCP/IP packet captures using Wireshark. Identify different protocols, analyze network traffic patterns, and create a detailed report with screenshots and explanations.",
+    "dueDate": "2025-01-22T23:59:59.000Z",
+    "attachments": [
+      {
+        "type": "pdf",
+        "url": "https://example.com/assignments/wireshark-tutorial.pdf"
+      },
+      {
+        "type": "image",
+        "url": "https://example.com/examples/wireshark-screenshot-example.png"
+      }
+    ]
+  },
+  {
+    "id": 1735987200007,
+    "subject": "Mobile App Development",
+    "title": "Flutter Todo App",
+    "description": "Create a feature-rich Todo mobile application using Flutter. Include: Add/Edit/Delete tasks, Mark as complete, Categories, Local storage, and search functionality.",
+    "dueDate": "2025-01-30T23:59:59.000Z",
+    "attachments": [
+      {
+        "type": "pdf",
+        "url": "https://example.com/assignments/flutter-todo-specs.pdf"
+      }
+    ]
+  },
+  {
+    "id": 1735987200008,
+    "subject": "Artificial Intelligence",
+    "title": "A* Search Algorithm Implementation",
+    "description": "Implement the A* search algorithm to solve the 8-puzzle problem. Compare performance with BFS and DFS. Provide complexity analysis and test with multiple puzzle configurations.",
+    "dueDate": "2025-01-16T23:59:59.000Z",
     "attachments": []
   }
 ]

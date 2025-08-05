@@ -1,77 +1,155 @@
 {
-  "monday": [
+  "sunday": [
     {
-      "time": "9:00-10:00",
-      "subject": "Mathematics",
-      "teacher": "Prof. Smith",
-      "status": "cancelled"
-    },
-    {
-      "time": "10:00-11:00",
-      "subject": "Physics",
-      "teacher": "Dr. Johnson",
+      "subject": "Computer Networks",
+      "teacher": "Dr. Rahman",
+      "time": "9:00-10:30",
+      "classroom": "412",
       "status": "normal"
     },
     {
-      "time": "11:00-12:00",
-      "subject": "Chemistry",
-      "teacher": "Prof. Davis",
+      "subject": "Database Management",
+      "teacher": "Prof. Ahmed",
+      "time": "10:30-12:00",
+      "classroom": "414/A",
+      "status": "normal"
+    },
+    {
+      "subject": "Software Engineering",
+      "teacher": "Ms. Fatima",
+      "time": "1:00-2:30",
+      "classroom": "Lab-2",
+      "status": "cancelled"
+    }
+  ],
+  "monday": [
+    {
+      "subject": "Data Structures",
+      "teacher": "Mr. Hassan",
+      "time": "8:00-9:30",
+      "classroom": "401",
+      "status": "normal"
+    },
+    {
+      "subject": "Operating Systems",
+      "teacher": "Dr. Karim",
+      "time": "9:30-11:00",
+      "classroom": "403/B",
+      "status": "problem"
+    },
+    {
+      "subject": "Algorithm Analysis",
+      "teacher": "Prof. Ali",
+      "time": "11:00-12:30",
+      "classroom": "405",
+      "status": "normal"
+    },
+    {
+      "subject": "Web Development Lab",
+      "teacher": "Ms. Sara",
+      "time": "2:00-4:00",
+      "classroom": "Lab-1",
       "status": "normal"
     }
   ],
   "tuesday": [
     {
-      "time": "9:00-10:00",
-      "subject": "English",
-      "teacher": "Ms. Wilson",
+      "subject": "Machine Learning",
+      "teacher": "Dr. Nasir",
+      "time": "9:00-10:30",
+      "classroom": "412",
       "status": "normal"
     },
     {
-      "time": "10:00-11:00",
-      "subject": "History",
-      "teacher": "Prof. Brown",
+      "subject": "Computer Graphics",
+      "teacher": "Mr. Zaman",
+      "time": "10:30-12:00",
+      "classroom": "Lab-3",
+      "status": "normal"
+    },
+    {
+      "subject": "Artificial Intelligence",
+      "teacher": "Prof. Rashid",
+      "time": "1:00-2:30",
+      "classroom": "414/A",
       "status": "normal"
     }
   ],
   "wednesday": [
     {
-      "time": "9:00-10:00",
-      "subject": "Mathematics",
-      "teacher": "Prof. Smith",
+      "subject": "Cybersecurity",
+      "teacher": "Dr. Khan",
+      "time": "8:30-10:00",
+      "classroom": "402",
       "status": "normal"
     },
     {
-      "time": "10:00-11:00",
-      "subject": "Computer Science",
-      "teacher": "Dr. Lee",
+      "subject": "Mobile App Development",
+      "teacher": "Ms. Nadia",
+      "time": "10:00-11:30",
+      "classroom": "Lab-2",
+      "status": "normal"
+    },
+    {
+      "subject": "Project Management",
+      "teacher": "Mr. Iqbal",
+      "time": "11:30-1:00",
+      "classroom": "Conference Room",
       "status": "normal"
     }
   ],
   "thursday": [
     {
-      "time": "9:00-10:00",
-      "subject": "Physics",
-      "teacher": "Dr. Johnson",
+      "subject": "Digital Signal Processing",
+      "teacher": "Dr. Mahmud",
+      "time": "9:00-10:30",
+      "classroom": "415",
       "status": "normal"
     },
     {
-      "time": "10:00-11:00",
-      "subject": "Chemistry",
-      "teacher": "Prof. Davis",
+      "subject": "System Analysis & Design",
+      "teacher": "Prof. Hasan",
+      "time": "10:30-12:00",
+      "classroom": "413/B",
+      "status": "normal"
+    },
+    {
+      "subject": "Research Methodology",
+      "teacher": "Dr. Sultana",
+      "time": "2:00-3:30",
+      "classroom": "Seminar Hall",
       "status": "normal"
     }
   ],
   "friday": [
     {
-      "time": "9:00-10:00",
-      "subject": "English",
-      "teacher": "Ms. Wilson",
+      "subject": "Thesis Defense Preparation",
+      "teacher": "All Faculty",
+      "time": "10:00-12:00",
+      "classroom": "Auditorium",
       "status": "normal"
     },
     {
-      "time": "10:00-11:00",
-      "subject": "Mathematics",
-      "teacher": "Prof. Smith",
+      "subject": "Industry Expert Session",
+      "teacher": "Guest Speaker",
+      "time": "2:00-4:00",
+      "classroom": "Main Hall",
+      "status": "normal"
+    }
+  ],
+  "saturday": [
+    {
+      "subject": "Networking Lab",
+      "teacher": "Mr. Rafiq",
+      "time": "9:00-11:00",
+      "classroom": "Lab-4",
+      "status": "normal"
+    },
+    {
+      "subject": "Software Testing",
+      "teacher": "Ms. Rehana",
+      "time": "11:00-12:30",
+      "classroom": "408",
       "status": "normal"
     }
   ]

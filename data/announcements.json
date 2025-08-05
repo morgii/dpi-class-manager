@@ -1,8 +1,44 @@
 [
   {
-    "id": 1,
-    "title": "Welcome to New Semester",
-    "content": "Welcome everyone to the new academic semester. Please check your routines and homeworks regularly.",
-    "date": "2025-08-04T16:27:25.419Z"
+    "id": 1735987200000,
+    "title": "Mid-Term Exam Schedule Released",
+    "content": "The mid-term examination schedule for all subjects has been posted on the notice board. Please check your exam dates and prepare accordingly. Good luck!",
+    "date": "2025-01-04T10:00:00.000Z"
+  },
+  {
+    "id": 1735900800000,
+    "title": "Programming Contest Registration Open",
+    "content": "Annual DPI Programming Contest 2025 registration is now open. Teams of 3 members can register by January 15th. Prizes worth 50,000 BDT awaiting!",
+    "date": "2025-01-03T08:00:00.000Z"
+  },
+  {
+    "id": 1735814400000,
+    "title": "Library Extended Hours",
+    "content": "During exam period, the library will remain open until 11:00 PM from Monday to Friday. Weekend hours: 9:00 AM to 8:00 PM.",
+    "date": "2025-01-02T12:00:00.000Z"
+  },
+  {
+    "id": 1735728000000,
+    "title": "Guest Lecture on AI Ethics",
+    "content": "Join us for an exclusive guest lecture on 'Ethics in Artificial Intelligence' by Dr. Mehrab Hossain from BUET on January 10th at 2:00 PM in the Main Auditorium.",
+    "date": "2025-01-01T14:00:00.000Z"
+  },
+  {
+    "id": 1735641600000,
+    "title": "Semester Fee Payment Reminder",
+    "content": "Final reminder: Semester fees must be paid by January 20th to avoid late payment charges. Payment can be made online or at the accounts office.",
+    "date": "2024-12-31T09:00:00.000Z"
+  },
+  {
+    "id": 1735555200000,
+    "title": "New WiFi Network Available",
+    "content": "A new high-speed WiFi network 'DPI-Students-5G' is now available across campus. Password: DPI2025@Student. Enjoy faster internet!",
+    "date": "2024-12-30T11:30:00.000Z"
+  },
+  {
+    "id": 1735468800000,
+    "title": "Career Fair 2025 Announcement",
+    "content": "DPI Career Fair 2025 will be held on February 15-16. Over 50 companies will participate. Start preparing your resumes and portfolios!",
+    "date": "2024-12-29T13:45:00.000Z"
   }
 ]
