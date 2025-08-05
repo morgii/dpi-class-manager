@@ -89,9 +89,53 @@
         align-items: center;
         justify-content: center;
     }
+
+    /* Invisible reload animation */
+    .reload-indicator {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, #15803d, transparent);
+        background-size: 200% 100%;
+        animation: loading-bar 2s ease-in-out;
+        z-index: 9999;
+        opacity: 0;
+    }
+
+    .reload-indicator.active {
+        opacity: 1;
+    }
+
+    @keyframes loading-bar {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+    }
+
+    .attachment-preview {
+        display: inline-block;
+        margin: 4px;
+        padding: 8px 12px;
+        background: #374151;
+        border: 1px solid #6b7280;
+        border-radius: 6px;
+        text-decoration: none;
+        color: #9ca3af;
+        font-size: 12px;
+        transition: all 0.2s;
+    }
+
+    .attachment-preview:hover {
+        background: #4b5563;
+        color: #15803d;
+    }
 </style>
 </head>
 <body class="bg-black text-white min-h-screen pb-20 english-font">
+    <!-- Invisible Reload Indicator -->
+    <div id="reloadIndicator" class="reload-indicator"></div>
+
     <!-- Header -->
     <header class="bg-gray-900 shadow-lg sticky top-0 z-50 border-b border-green-500">
         <div class="max-w-md mx-auto px-4 py-4 flex items-center justify-between">
@@ -143,7 +187,12 @@
 
         <!-- Announcements -->
         <section class="space-y-4">
-            <h2 class="text-xl font-bold text-green-500">Announcements</h2>
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl font-bold text-green-500">Announcements</h2>
+                <button id="viewAllAnnouncementsBtn" class="text-sm text-green-400 hover:text-green-300">
+                    View All <i class="fas fa-arrow-right ml-1"></i>
+                </button>
+            </div>
             <div id="announcements" class="space-y-3"></div>
         </section>
 
@@ -201,6 +250,17 @@
             </button>
         </div>
         <div id="homeworksList" class="space-y-4"></div>
+    </div>
+
+    <!-- All Announcements Page -->
+    <div id="allAnnouncementsPage" class="hidden max-w-md mx-auto px-4 py-6">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-green-500">All Announcements</h2>
+            <button onclick="navigateTo('home')" class="text-green-400 hover:text-green-300">
+                <i class="fas fa-arrow-left text-xl"></i>
+            </button>
+        </div>
+        <div id="allAnnouncementsList" class="space-y-4"></div>
     </div>
 
     <!-- Floating Admin Button -->
@@ -346,6 +406,14 @@
             status.className = `w-3 h-3 rounded-full ${connected ? 'bg-green-500' : 'bg-red-500'}`;
         }
 
+        function showReloadIndicator() {
+            const indicator = document.getElementById('reloadIndicator');
+            indicator.classList.add('active');
+            setTimeout(() => {
+                indicator.classList.remove('active');
+            }, 2000);
+        }
+
         function markUnsavedChanges() {
             appData.hasUnsavedChanges = true;
             document.getElementById('unsavedBadge').classList.remove('hidden');
@@ -370,8 +438,12 @@
             }
         }
 
-        async function loadAllData() {
-            document.getElementById('loadingScreen').classList.remove('hidden');
+        async function loadAllData(silent = false) {
+            if (!silent) {
+                document.getElementById('loadingScreen').classList.remove('hidden');
+            } else {
+                showReloadIndicator();
+            }
             
             try {
                 const [routine, announcements, homeworks, dailyNotices] = await Promise.all([
@@ -393,9 +465,11 @@
             } catch (error) {
                 console.error('Error loading data:', error);
                 updateConnectionStatus(false);
-                showMessage('Failed to load data', 'error');
+                if (!silent) showMessage('Failed to load data', 'error');
             } finally {
-                document.getElementById('loadingScreen').classList.add('hidden');
+                if (!silent) {
+                    document.getElementById('loadingScreen').classList.add('hidden');
+                }
             }
         }
 
@@ -547,19 +621,25 @@
             document.getElementById('mainContent').classList.add('hidden');
             document.getElementById('routinePage').classList.add('hidden');
             document.getElementById('homeworksPage').classList.add('hidden');
+            document.getElementById('allAnnouncementsPage').classList.add('hidden');
 
             if (page === 'home') {
                 document.getElementById('mainContent').classList.remove('hidden');
+                renderHomePage();
             } else if (page === 'routine') {
                 document.getElementById('routinePage').classList.remove('hidden');
                 renderRoutinePage();
             } else if (page === 'homeworks') {
                 document.getElementById('homeworksPage').classList.remove('hidden');
                 renderHomeworksPage();
+            } else if (page === 'announcements') {
+                document.getElementById('allAnnouncementsPage').classList.remove('hidden');
+                renderAllAnnouncementsPage();
             }
 
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            document.querySelector(`[data-page="${page}"]`).classList.add('active');
+            const navItem = document.querySelector(`[data-page="${page}"]`);
+            if (navItem) navItem.classList.add('active');
             currentPage = page;
         }
 
@@ -567,6 +647,7 @@
             if (currentPage === 'home') renderHomePage();
             else if (currentPage === 'routine') renderRoutinePage();
             else if (currentPage === 'homeworks') renderHomeworksPage();
+            else if (currentPage === 'announcements') renderAllAnnouncementsPage();
         }
 
         function renderHomePage() {
@@ -579,9 +660,12 @@
             const todayClasses = appData.routine[dayName] || [];
             
             const todayClassesHTML = todayClasses.length > 0 
-                ? todayClasses.map(cls => {
+                ? todayClasses.map((cls, index) => {
                     const div = document.createElement('div');
-                    div.className = `routine-cell ${cls.status || 'normal'} p-4 rounded-lg text-white`;
+                    div.className = `routine-cell ${cls.status || 'normal'} p-4 rounded-lg text-white ${appData.isAuthenticated ? 'cursor-pointer' : ''}`;
+                    if (appData.isAuthenticated) {
+                        div.onclick = () => editClass(dayName, index);
+                    }
                     div.innerHTML = `
                         <div class="flex justify-between items-start">
                             <div class="flex-1">
@@ -601,9 +685,10 @@
 
             document.getElementById('todayClasses').innerHTML = todayClassesHTML;
 
-            // Daily notices
-            const noticesHTML = appData.dailyNotices.length > 0
-                ? appData.dailyNotices.slice(0, 3).map(notice => {
+            // Daily notices - Sort by date descending (newest first)
+            const sortedNotices = [...appData.dailyNotices].sort((a, b) => new Date(b.date) - new Date(a.date));
+            const noticesHTML = sortedNotices.length > 0
+                ? sortedNotices.slice(0, 3).map(notice => {
                     const div = document.createElement('div');
                     div.className = 'card p-4 rounded-lg';
                     div.innerHTML = `
@@ -617,15 +702,31 @@
 
             document.getElementById('dailyNotices').innerHTML = noticesHTML;
 
-            // Announcements
-            const announcementsHTML = appData.announcements.length > 0
-                ? appData.announcements.slice(0, 3).map(announcement => {
+            // Announcements - Sort by date descending (newest first)
+            const sortedAnnouncements = [...appData.announcements].sort((a, b) => new Date(b.date) - new Date(a.date));
+            const announcementsHTML = sortedAnnouncements.length > 0
+                ? sortedAnnouncements.slice(0, 3).map(announcement => {
                     const div = document.createElement('div');
                     div.className = 'card p-4 rounded-lg border-l-4 border-green-500';
                     div.innerHTML = `
-                        <h4 class="font-semibold mb-2">${announcement.title}</h4>
-                        <p class="text-sm text-gray-300 mb-2">${announcement.content}</p>
-                        <span class="text-xs text-gray-400">${new Date(announcement.date).toLocaleDateString()}</span>
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="flex-1">
+                                <h4 class="font-semibold mb-2">${announcement.title}</h4>
+                                <p class="text-sm text-gray-300 mb-2">${announcement.content}</p>
+                                <span class="text-xs text-gray-400">${new Date(announcement.date).toLocaleDateString()}</span>
+                            </div>
+                            ${appData.isAuthenticated ? `<button onclick="editAnnouncement(${announcement.id})" class="text-gray-400 hover:text-white ml-2"><i class="fas fa-edit"></i></button>` : ''}
+                        </div>
+                        ${announcement.attachments && announcement.attachments.length > 0 ? `
+                            <div class="mt-3 flex flex-wrap">
+                                ${announcement.attachments.map(att => `
+                                    <a href="${att.url}" target="_blank" class="attachment-preview">
+                                        <i class="fas ${att.type === 'pdf' ? 'fa-file-pdf' : 'fa-image'} mr-1"></i>
+                                        ${att.type.toUpperCase()}
+                                    </a>
+                                `).join('')}
+                            </div>
+                        ` : ''}
                     `;
                     applyFontClass(div, announcement.title + announcement.content);
                     return div.outerHTML;
@@ -633,6 +734,41 @@
                 : '<p class="text-gray-400 text-center py-8">No announcements</p>';
 
             document.getElementById('announcements').innerHTML = announcementsHTML;
+        }
+
+        function renderAllAnnouncementsPage() {
+            // Sort by date descending (newest first)
+            const sortedAnnouncements = [...appData.announcements].sort((a, b) => new Date(b.date) - new Date(a.date));
+            const allAnnouncementsHTML = sortedAnnouncements.length > 0
+                ? sortedAnnouncements.map(announcement => {
+                    const div = document.createElement('div');
+                    div.className = 'card p-4 rounded-lg border-l-4 border-green-500';
+                    div.innerHTML = `
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="flex-1">
+                                <h4 class="font-semibold mb-2">${announcement.title}</h4>
+                                <p class="text-sm text-gray-300 mb-2">${announcement.content}</p>
+                                <span class="text-xs text-gray-400">${new Date(announcement.date).toLocaleDateString()}</span>
+                            </div>
+                            ${appData.isAuthenticated ? `<button onclick="editAnnouncement(${announcement.id})" class="text-gray-400 hover:text-white ml-2"><i class="fas fa-edit"></i></button>` : ''}
+                        </div>
+                        ${announcement.attachments && announcement.attachments.length > 0 ? `
+                            <div class="mt-3 flex flex-wrap">
+                                ${announcement.attachments.map(att => `
+                                    <a href="${att.url}" target="_blank" class="attachment-preview">
+                                        <i class="fas ${att.type === 'pdf' ? 'fa-file-pdf' : 'fa-image'} mr-1"></i>
+                                        ${att.type.toUpperCase()}
+                                    </a>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                    `;
+                    applyFontClass(div, announcement.title + announcement.content);
+                    return div.outerHTML;
+                }).join('')
+                : '<p class="text-gray-400 text-center py-8">No announcements</p>';
+
+            document.getElementById('allAnnouncementsList').innerHTML = allAnnouncementsHTML;
         }
 
         function renderRoutinePage() {
@@ -683,8 +819,10 @@
         }
 
         function renderHomeworksPage() {
-            const homeworksHTML = appData.homeworks.length > 0
-                ? appData.homeworks.map(hw => {
+            // Sort by date descending (newest first)
+            const sortedHomeworks = [...appData.homeworks].sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate));
+            const homeworksHTML = sortedHomeworks.length > 0
+                ? sortedHomeworks.map(hw => {
                     const div = document.createElement('div');
                     div.className = 'card p-4 rounded-lg';
                     div.innerHTML = `
@@ -701,11 +839,11 @@
                             ${hw.attachments && hw.attachments.length > 0 ? `<span class="text-green-400"><i class="fas fa-paperclip mr-1"></i>${hw.attachments.length} files</span>` : ''}
                         </div>
                         ${hw.attachments && hw.attachments.length > 0 ? `
-                            <div class="mt-3 space-y-2">
+                            <div class="mt-3 flex flex-wrap">
                                 ${hw.attachments.map(att => `
-                                    <a href="${att.url}" target="_blank" class="block text-green-400 hover:text-green-300 text-sm">
-                                        <i class="fas ${att.type === 'pdf' ? 'fa-file-pdf' : 'fa-image'} mr-2"></i>
-                                        ${att.type === 'pdf' ? 'PDF Document' : 'Image'}
+                                    <a href="${att.url}" target="_blank" class="attachment-preview">
+                                        <i class="fas ${att.type === 'pdf' ? 'fa-file-pdf' : 'fa-image'} mr-1"></i>
+                                        ${att.type.toUpperCase()}
                                     </a>
                                 `).join('')}
                             </div>
@@ -865,6 +1003,14 @@
                     <label class="block text-sm font-medium mb-2">Content</label>
                     <textarea id="announcementContent" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white h-24" placeholder="Content"></textarea>
                 </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">PDF Link</label>
+                    <input type="url" id="announcementPdfLink" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" placeholder="https://...">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Image Link</label>
+                    <input type="url" id="announcementImageLink" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" placeholder="https://...">
+                </div>
                 <button onclick="saveAnnouncement()" class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-lg border border-green-500">Add</button>
             `;
             showContentModal('Add Announcement', formHTML);
@@ -873,16 +1019,86 @@
         function saveAnnouncement() {
             const title = document.getElementById('announcementTitle').value.trim();
             const content = document.getElementById('announcementContent').value.trim();
+            const pdfLink = document.getElementById('announcementPdfLink').value.trim();
+            const imageLink = document.getElementById('announcementImageLink').value.trim();
             
             if (title && content) {
-                appData.announcements.unshift({
+                const attachments = [];
+                if (pdfLink) attachments.push({ type: 'pdf', url: pdfLink });
+                if (imageLink) attachments.push({ type: 'image', url: imageLink });
+                
+                appData.announcements.push({
                     id: Date.now(), title, content,
-                    date: new Date().toISOString()
+                    date: new Date().toISOString(),
+                    attachments
                 });
                 hideModal('contentModal');
                 renderCurrentPage();
                 markUnsavedChanges();
                 showMessage('Announcement added');
+            }
+        }
+
+        function editAnnouncement(id) {
+            const announcement = appData.announcements.find(a => a.id === id);
+            const pdf = announcement.attachments?.find(a => a.type === 'pdf');
+            const img = announcement.attachments?.find(a => a.type === 'image');
+            
+            const formHTML = `
+                <div>
+                    <label class="block text-sm font-medium mb-2">Title</label>
+                    <input type="text" id="editAnnouncementTitle" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" value="${announcement.title}">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Content</label>
+                    <textarea id="editAnnouncementContent" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white h-24">${announcement.content}</textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">PDF Link</label>
+                    <input type="url" id="editAnnouncementPdfLink" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" value="${pdf ? pdf.url : ''}">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Image Link</label>
+                    <input type="url" id="editAnnouncementImageLink" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" value="${img ? img.url : ''}">
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="updateAnnouncement(${id})" class="flex-1 bg-green-600 hover:bg-green-700 p-3 rounded-lg border border-green-500">Update</button>
+                    <button onclick="deleteAnnouncement(${id})" class="flex-1 bg-gray-600 hover:bg-gray-700 p-3 rounded-lg border border-gray-500">Delete</button>
+                </div>
+            `;
+            showContentModal('Edit Announcement', formHTML);
+        }
+
+        function updateAnnouncement(id) {
+            const title = document.getElementById('editAnnouncementTitle').value.trim();
+            const content = document.getElementById('editAnnouncementContent').value.trim();
+            const pdfLink = document.getElementById('editAnnouncementPdfLink').value.trim();
+            const imageLink = document.getElementById('editAnnouncementImageLink').value.trim();
+            
+            const index = appData.announcements.findIndex(a => a.id === id);
+            if (index !== -1 && title && content) {
+                const attachments = [];
+                if (pdfLink) attachments.push({ type: 'pdf', url: pdfLink });
+                if (imageLink) attachments.push({ type: 'image', url: imageLink });
+                
+                appData.announcements[index] = {
+                    ...appData.announcements[index],
+                    title, content, attachments
+                };
+                hideModal('contentModal');
+                renderCurrentPage();
+                markUnsavedChanges();
+                showMessage('Announcement updated');
+            }
+        }
+
+        function deleteAnnouncement(id) {
+            if (confirm('Delete this announcement?')) {
+                appData.announcements = appData.announcements.filter(a => a.id !== id);
+                hideModal('contentModal');
+                renderCurrentPage();
+                markUnsavedChanges();
+                showMessage('Announcement deleted');
             }
         }
 
@@ -901,7 +1117,7 @@
             const content = document.getElementById('dailyNoticeText').value.trim();
             
             if (content) {
-                appData.dailyNotices.unshift({
+                appData.dailyNotices.push({
                     id: Date.now(), content,
                     date: new Date().toISOString()
                 });
@@ -1046,7 +1262,7 @@
         // Event listeners
         document.addEventListener('DOMContentLoaded', function() {
             loadAllData();
-            dataFetchInterval = setInterval(loadAllData, 60000); // 1 minute
+            dataFetchInterval = setInterval(() => loadAllData(true), 60000); // 1 minute, silent reload
 
             // Navigation
             document.querySelectorAll('.nav-item').forEach(item => {
@@ -1074,6 +1290,7 @@
             document.getElementById('addHomeworkBtn').addEventListener('click', addHomework);
             document.getElementById('addAnnouncementBtn').addEventListener('click', addAnnouncement);
             document.getElementById('addDailyNoticeBtn').addEventListener('click', addDailyNotice);
+            document.getElementById('viewAllAnnouncementsBtn').addEventListener('click', () => navigateTo('announcements'));
             document.getElementById('authenticateBtn').addEventListener('click', authenticate);
             document.getElementById('logoutBtn').addEventListener('click', logout);
             document.getElementById('manualCommitBtn').addEventListener('click', () => commitToGitHub());
