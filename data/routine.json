@@ -119,6 +119,12 @@
       "time": "2:00-3:30",
       "classroom": "Seminar Hall",
       "status": "normal"
+    },
+    {
+      "subject": "asdfasdf",
+      "teacher": "asdfasdf",
+      "time": "9-10",
+      "classroom": "568"
     }
   ],
   "friday": [
