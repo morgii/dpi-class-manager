@@ -1,25 +1,4 @@
 {
-  "timestamp": "2025-01-04T15:30:45.123Z",
-  "version": "2.1",
-  "lastUpdatedBy": "admin",
-  "totalChanges": 3,
-  "changes": [
-    {
-      "type": "announcement",
-      "action": "added",
-      "title": "Mid-Term Exam Schedule Released"
-    },
-    {
-      "type": "routine",
-      "action": "modified",
-      "day": "monday",
-      "subject": "Operating Systems",
-      "change": "status changed to problem"
-    },
-    {
-      "type": "daily_notice",
-      "action": "added",
-      "content": "Today's Computer Networks lab moved to Lab-4"
-    }
-  ]
+  "timestamp": "2025-08-05T04:32:03.441Z",
+  "version": "2.1"
 }
