@@ -20,6 +20,12 @@
       "time": "1:00-2:30",
       "classroom": "Lab-2",
       "status": "cancelled"
+    },
+    {
+      "subject": "asdfasdfasdfas",
+      "teacher": "fasdfasdfasdfasdfasd",
+      "time": "8",
+      "classroom": "4545"
     }
   ],
   "monday": [
