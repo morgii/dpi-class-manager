@@ -7,11 +7,18 @@
       "classroom": "411"
     }
   ],
-  "wednesday": [
+  "monday": [
     {
-      "subject": "Computer Network",
+      "subject": "Web design",
+      "teacher": "ataur sir",
+      "time": "1",
+      "classroom": "111",
+      "status": null
+    },
+    {
+      "subject": "Web design",
       "teacher": "Alauddin",
-      "time": "9-10",
+      "time": "9 - 10",
       "classroom": "212",
       "status": null
     }
