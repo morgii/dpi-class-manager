@@ -130,6 +130,25 @@
         background: #4b5563;
         color: #15803d;
     }
+
+    .attachment-input-group {
+        border: 1px solid #374151;
+        border-radius: 8px;
+        background: #111827;
+        padding: 12px;
+        margin-bottom: 12px;
+    }
+
+    .attachment-input-group .remove-btn {
+        color: #ef4444;
+        cursor: pointer;
+        float: right;
+        margin-top: -4px;
+    }
+
+    .attachment-input-group .remove-btn:hover {
+        color: #dc2626;
+    }
 </style>
 </head>
 <body class="bg-black text-white min-h-screen pb-20 english-font">
@@ -216,9 +235,6 @@
     <div id="routinePage" class="hidden max-w-md mx-auto px-4 py-6">
         <div class="flex items-center justify-between mb-6">
             <h2 class="text-2xl font-bold text-green-500">Class Routine</h2>
-            <button id="editRoutineBtn" class="admin-only text-green-400 hover:text-green-300">
-                <i class="fas fa-edit text-xl"></i>
-            </button>
         </div>
         
         <!-- Week Days -->
@@ -234,11 +250,6 @@
 
         <!-- Routine Table -->
         <div id="routineContainer" class="space-y-3"></div>
-        
-        <!-- Add Class Button -->
-        <button id="addClassBtn" class="admin-only mt-4 w-full bg-green-600 hover:bg-green-700 p-3 rounded-lg border border-green-500">
-            <i class="fas fa-plus mr-2"></i> Add Class
-        </button>
     </div>
 
     <!-- Homeworks Page -->
@@ -662,10 +673,7 @@
             const todayClassesHTML = todayClasses.length > 0 
                 ? todayClasses.map((cls, index) => {
                     const div = document.createElement('div');
-                    div.className = `routine-cell ${cls.status || 'normal'} p-4 rounded-lg text-white ${appData.isAuthenticated ? 'cursor-pointer' : ''}`;
-                    if (appData.isAuthenticated) {
-                        div.onclick = () => editClass(dayName, index);
-                    }
+                    div.className = `routine-cell ${cls.status || 'normal'} p-4 rounded-lg text-white`;
                     div.innerHTML = `
                         <div class="flex justify-between items-start">
                             <div class="flex-1">
@@ -692,8 +700,22 @@
                     const div = document.createElement('div');
                     div.className = 'card p-4 rounded-lg';
                     div.innerHTML = `
-                        <p class="text-sm">${notice.content}</p>
-                        <span class="text-xs text-gray-400 mt-2 block">${new Date(notice.date).toLocaleDateString()}</span>
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1">
+                                <p class="text-sm">${notice.content}</p>
+                                <span class="text-xs text-gray-400 mt-2 block">${new Date(notice.date).toLocaleDateString()}</span>
+                            </div>
+                            ${appData.isAuthenticated ? `
+                                <div class="flex space-x-2 ml-2">
+                                    <button onclick="editDailyNotice(${notice.id})" class="text-gray-400 hover:text-white">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button onclick="deleteDailyNotice(${notice.id})" class="text-gray-400 hover:text-red-400">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            ` : ''}
+                        </div>
                     `;
                     applyFontClass(div, notice.content);
                     return div.outerHTML;
@@ -794,10 +816,7 @@
             const routineHTML = classes.length > 0
                 ? classes.map((cls, index) => {
                     const div = document.createElement('div');
-                    div.className = `routine-cell ${cls.status || 'normal'} p-4 rounded-lg text-white ${appData.isAuthenticated ? 'cursor-pointer' : ''}`;
-                    if (appData.isAuthenticated) {
-                        div.onclick = () => editClass(day, index);
-                    }
+                    div.className = `routine-cell ${cls.status || 'normal'} p-4 rounded-lg text-white`;
                     div.innerHTML = `
                         <div class="flex justify-between items-start">
                             <div class="flex-1">
@@ -871,126 +890,6 @@
             document.getElementById('contentModalTitle').textContent = title;
             document.getElementById('contentForm').innerHTML = formHTML;
             showModal('contentModal');
-        }
-
-        function editClass(day, index) {
-            const cls = appData.routine[day][index];
-            const formHTML = `
-                <div>
-                    <label class="block text-sm font-medium mb-2">Subject</label>
-                    <input type="text" id="editClassSubject" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" value="${cls.subject}">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2">Teacher</label>
-                    <input type="text" id="editClassTeacher" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" value="${cls.teacher}">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2">Time</label>
-                    <input type="text" id="editClassTime" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" value="${cls.time}">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2">Classroom</label>
-                    <input type="text" id="editClassroom" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" value="${cls.classroom || ''}" placeholder="e.g. 412, 414/A">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2">Status</label>
-                    <select id="classStatus" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white">
-                        <option value="normal" ${(cls.status || 'normal') === 'normal' ? 'selected' : ''}>Normal</option>
-                        <option value="cancelled" ${cls.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
-                        <option value="problem" ${cls.status === 'problem' ? 'selected' : ''}>Problem</option>
-                    </select>
-                </div>
-                <div class="flex space-x-2">
-                    <button onclick="updateClass('${day}', ${index})" class="flex-1 bg-green-600 hover:bg-green-700 p-3 rounded-lg border border-green-500">Update</button>
-                    <button onclick="deleteClass('${day}', ${index})" class="flex-1 bg-gray-600 hover:bg-gray-700 p-3 rounded-lg border border-gray-500">Delete</button>
-                </div>
-            `;
-            showContentModal('Edit Class', formHTML);
-        }
-
-        function updateClass(day, index) {
-            const subject = document.getElementById('editClassSubject').value.trim();
-            const teacher = document.getElementById('editClassTeacher').value.trim();
-            const time = document.getElementById('editClassTime').value.trim();
-            const classroom = document.getElementById('editClassroom').value.trim();
-            const status = document.getElementById('classStatus').value;
-            
-            if (subject && teacher && time) {
-                appData.routine[day][index] = {
-                    subject, teacher, time, 
-                    classroom: classroom || null,
-                    status: status !== 'normal' ? status : null
-                };
-                hideModal('contentModal');
-                renderCurrentPage();
-                markUnsavedChanges();
-                showMessage('Class updated');
-            }
-        }
-
-        function deleteClass(day, index) {
-            if (confirm('Delete this class?')) {
-                appData.routine[day].splice(index, 1);
-                hideModal('contentModal');
-                renderCurrentPage();
-                markUnsavedChanges();
-                showMessage('Class deleted');
-            }
-        }
-
-        function addClass() {
-            const formHTML = `
-                <div>
-                    <label class="block text-sm font-medium mb-2">Day</label>
-                    <select id="newClassDay" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white">
-                        <option value="sunday">Sunday</option>
-                        <option value="monday">Monday</option>
-                        <option value="tuesday">Tuesday</option>
-                        <option value="wednesday">Wednesday</option>
-                        <option value="thursday">Thursday</option>
-                        <option value="friday">Friday</option>
-                        <option value="saturday">Saturday</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2">Subject</label>
-                    <input type="text" id="newClassSubject" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" placeholder="Subject">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2">Teacher</label>
-                    <input type="text" id="newClassTeacher" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" placeholder="Teacher">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2">Time</label>
-                    <input type="text" id="newClassTime" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" placeholder="e.g. 9:00-10:00">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2">Classroom</label>
-                    <input type="text" id="newClassroom" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" placeholder="e.g. 412">
-                </div>
-                <button onclick="saveNewClass()" class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-lg border border-green-500">Add Class</button>
-            `;
-            showContentModal('Add Class', formHTML);
-        }
-
-        function saveNewClass() {
-            const day = document.getElementById('newClassDay').value;
-            const subject = document.getElementById('newClassSubject').value.trim();
-            const teacher = document.getElementById('newClassTeacher').value.trim();
-            const time = document.getElementById('newClassTime').value.trim();
-            const classroom = document.getElementById('newClassroom').value.trim();
-            
-            if (subject && teacher && time) {
-                if (!appData.routine[day]) appData.routine[day] = [];
-                appData.routine[day].push({
-                    subject, teacher, time,
-                    classroom: classroom || null
-                });
-                hideModal('contentModal');
-                renderCurrentPage();
-                markUnsavedChanges();
-                showMessage('Class added');
-            }
         }
 
         function addAnnouncement() {
@@ -1128,6 +1027,74 @@
             }
         }
 
+        function editDailyNotice(id) {
+            const notice = appData.dailyNotices.find(n => n.id === id);
+            
+            const formHTML = `
+                <div>
+                    <label class="block text-sm font-medium mb-2">Notice</label>
+                    <textarea id="editDailyNoticeText" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white h-24">${notice.content}</textarea>
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="updateDailyNotice(${id})" class="flex-1 bg-green-600 hover:bg-green-700 p-3 rounded-lg border border-green-500">Update</button>
+                    <button onclick="deleteDailyNotice(${id})" class="flex-1 bg-gray-600 hover:bg-gray-700 p-3 rounded-lg border border-gray-500">Delete</button>
+                </div>
+            `;
+            showContentModal('Edit Daily Notice', formHTML);
+        }
+
+        function updateDailyNotice(id) {
+            const content = document.getElementById('editDailyNoticeText').value.trim();
+            
+            const index = appData.dailyNotices.findIndex(n => n.id === id);
+            if (index !== -1 && content) {
+                appData.dailyNotices[index] = {
+                    ...appData.dailyNotices[index],
+                    content
+                };
+                hideModal('contentModal');
+                renderCurrentPage();
+                markUnsavedChanges();
+                showMessage('Notice updated');
+            }
+        }
+
+        function deleteDailyNotice(id) {
+            if (confirm('Delete this notice?')) {
+                appData.dailyNotices = appData.dailyNotices.filter(n => n.id !== id);
+                hideModal('contentModal');
+                renderCurrentPage();
+                markUnsavedChanges();
+                showMessage('Notice deleted');
+            }
+        }
+
+        // Multiple attachment functions for homework
+        function createAttachmentInput(type = 'pdf', url = '') {
+            return `
+                <div class="attachment-input-group">
+                    <i class="fas fa-times remove-btn" onclick="removeAttachmentInput(this)"></i>
+                    <div class="mb-2">
+                        <select class="attachment-type w-full bg-gray-800 border border-gray-600 rounded-lg p-2 text-white text-sm" onchange="updateAttachmentIcon(this)">
+                            <option value="pdf" ${type === 'pdf' ? 'selected' : ''}>PDF</option>
+                            <option value="image" ${type === 'image' ? 'selected' : ''}>Image</option>
+                        </select>
+                    </div>
+                    <div>
+                        <input type="url" class="attachment-url w-full bg-gray-800 border border-gray-600 rounded-lg p-2 text-white text-sm" placeholder="https://..." value="${url}">
+                    </div>
+                </div>
+            `;
+        }
+
+        function removeAttachmentInput(element) {
+            element.closest('.attachment-input-group').remove();
+        }
+
+        function updateAttachmentIcon(selectElement) {
+            // This function can be used to update icons if needed
+        }
+
         function addHomework() {
             const formHTML = `
                 <div>
@@ -1147,16 +1114,22 @@
                     <input type="date" id="homeworkDueDate" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium mb-2">PDF Link</label>
-                    <input type="url" id="homeworkPdfLink" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" placeholder="https://...">
+                    <label class="block text-sm font-medium mb-2">Attachments</label>
+                    <div id="attachmentsContainer">
+                        ${createAttachmentInput()}
+                    </div>
+                    <button type="button" onclick="addAttachmentInput()" class="mt-2 text-green-400 hover:text-green-300 text-sm">
+                        <i class="fas fa-plus mr-1"></i> Add Another Attachment
+                    </button>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2">Image Link</label>
-                    <input type="url" id="homeworkImageLink" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" placeholder="https://...">
-                </div>
-                <button onclick="saveHomework()" class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-lg border border-green-500">Add</button>
+                <button onclick="saveHomework()" class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-lg border border-green-500 mt-4">Add</button>
             `;
             showContentModal('Add Homework', formHTML);
+        }
+
+        function addAttachmentInput() {
+            const container = document.getElementById('attachmentsContainer');
+            container.insertAdjacentHTML('beforeend', createAttachmentInput());
         }
 
         function saveHomework() {
@@ -1164,13 +1137,18 @@
             const title = document.getElementById('homeworkTitle').value.trim();
             const description = document.getElementById('homeworkDescription').value.trim();
             const dueDate = document.getElementById('homeworkDueDate').value;
-            const pdfLink = document.getElementById('homeworkPdfLink').value.trim();
-            const imageLink = document.getElementById('homeworkImageLink').value.trim();
             
             if (subject && title && description && dueDate) {
+                // Collect all attachments
                 const attachments = [];
-                if (pdfLink) attachments.push({ type: 'pdf', url: pdfLink });
-                if (imageLink) attachments.push({ type: 'image', url: imageLink });
+                const attachmentGroups = document.querySelectorAll('.attachment-input-group');
+                attachmentGroups.forEach(group => {
+                    const type = group.querySelector('.attachment-type').value;
+                    const url = group.querySelector('.attachment-url').value.trim();
+                    if (url) {
+                        attachments.push({ type, url });
+                    }
+                });
                 
                 appData.homeworks.push({
                     id: Date.now(), subject, title, description,
@@ -1186,8 +1164,13 @@
 
         function editHomework(id) {
             const hw = appData.homeworks.find(h => h.id === id);
-            const pdf = hw.attachments?.find(a => a.type === 'pdf');
-            const img = hw.attachments?.find(a => a.type === 'image');
+            
+            let attachmentsHTML = '';
+            if (hw.attachments && hw.attachments.length > 0) {
+                attachmentsHTML = hw.attachments.map(att => createAttachmentInput(att.type, att.url)).join('');
+            } else {
+                attachmentsHTML = createAttachmentInput();
+            }
             
             const formHTML = `
                 <div>
@@ -1207,14 +1190,15 @@
                     <input type="date" id="editHomeworkDueDate" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" value="${new Date(hw.dueDate).toISOString().split('T')[0]}">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium mb-2">PDF Link</label>
-                    <input type="url" id="editHomeworkPdfLink" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" value="${pdf ? pdf.url : ''}">
+                    <label class="block text-sm font-medium mb-2">Attachments</label>
+                    <div id="attachmentsContainer">
+                        ${attachmentsHTML}
+                    </div>
+                    <button type="button" onclick="addAttachmentInput()" class="mt-2 text-green-400 hover:text-green-300 text-sm">
+                        <i class="fas fa-plus mr-1"></i> Add Another Attachment
+                    </button>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2">Image Link</label>
-                    <input type="url" id="editHomeworkImageLink" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" value="${img ? img.url : ''}">
-                </div>
-                <div class="flex space-x-2">
+                <div class="flex space-x-2 mt-4">
                     <button onclick="updateHomework(${id})" class="flex-1 bg-green-600 hover:bg-green-700 p-3 rounded-lg border border-green-500">Update</button>
                     <button onclick="deleteHomework(${id})" class="flex-1 bg-gray-600 hover:bg-gray-700 p-3 rounded-lg border border-gray-500">Delete</button>
                 </div>
@@ -1227,14 +1211,19 @@
             const title = document.getElementById('editHomeworkTitle').value.trim();
             const description = document.getElementById('editHomeworkDescription').value.trim();
             const dueDate = document.getElementById('editHomeworkDueDate').value;
-            const pdfLink = document.getElementById('editHomeworkPdfLink').value.trim();
-            const imageLink = document.getElementById('editHomeworkImageLink').value.trim();
             
             const index = appData.homeworks.findIndex(hw => hw.id === id);
             if (index !== -1) {
+                // Collect all attachments
                 const attachments = [];
-                if (pdfLink) attachments.push({ type: 'pdf', url: pdfLink });
-                if (imageLink) attachments.push({ type: 'image', url: imageLink });
+                const attachmentGroups = document.querySelectorAll('.attachment-input-group');
+                attachmentGroups.forEach(group => {
+                    const type = group.querySelector('.attachment-type').value;
+                    const url = group.querySelector('.attachment-url').value.trim();
+                    if (url) {
+                        attachments.push({ type, url });
+                    }
+                });
                 
                 appData.homeworks[index] = {
                     ...appData.homeworks[index],
@@ -1286,7 +1275,6 @@
             // Modal handlers
             document.getElementById('adminBtn').addEventListener('click', () => showModal('adminModal'));
             document.getElementById('floatingAdmin').addEventListener('click', () => showModal('adminModal'));
-            document.getElementById('addClassBtn').addEventListener('click', addClass);
             document.getElementById('addHomeworkBtn').addEventListener('click', addHomework);
             document.getElementById('addAnnouncementBtn').addEventListener('click', addAnnouncement);
             document.getElementById('addDailyNoticeBtn').addEventListener('click', addDailyNotice);
