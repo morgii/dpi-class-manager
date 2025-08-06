@@ -131,23 +131,23 @@
         color: #15803d;
     }
 
-    .attachment-input-group {
-        border: 1px solid #374151;
-        border-radius: 8px;
-        background: #111827;
-        padding: 12px;
+    .attachment-input-container {
         margin-bottom: 12px;
     }
 
-    .attachment-input-group .remove-btn {
-        color: #ef4444;
-        cursor: pointer;
-        float: right;
-        margin-top: -4px;
+    .attachment-input-row {
+        display: flex;
+        margin-bottom: 8px;
     }
 
-    .attachment-input-group .remove-btn:hover {
-        color: #dc2626;
+    .attachment-input-row input {
+        flex-grow: 1;
+        margin-right: 8px;
+    }
+
+    .remove-attachment-btn {
+        color: #ef4444;
+        cursor: pointer;
     }
 </style>
 </head>
@@ -706,11 +706,11 @@
                                 <span class="text-xs text-gray-400 mt-2 block">${new Date(notice.date).toLocaleDateString()}</span>
                             </div>
                             ${appData.isAuthenticated ? `
-                                <div class="flex space-x-2 ml-2">
+                                <div class="flex space-x-2">
                                     <button onclick="editDailyNotice(${notice.id})" class="text-gray-400 hover:text-white">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button onclick="deleteDailyNotice(${notice.id})" class="text-gray-400 hover:text-red-400">
+                                    <button onclick="deleteDailyNotice(${notice.id})" class="text-red-400 hover:text-red-300">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
@@ -902,29 +902,58 @@
                     <label class="block text-sm font-medium mb-2">Content</label>
                     <textarea id="announcementContent" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white h-24" placeholder="Content"></textarea>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2">PDF Link</label>
-                    <input type="url" id="announcementPdfLink" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" placeholder="https://...">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2">Image Link</label>
-                    <input type="url" id="announcementImageLink" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" placeholder="https://...">
+                <div class="attachment-input-container">
+                    <label class="block text-sm font-medium mb-2">Attachments</label>
+                    <div id="announcementAttachments">
+                        <div class="attachment-input-row">
+                            <select class="w-1/3 bg-gray-800 border border-gray-600 rounded-lg p-3 text-white">
+                                <option value="pdf">PDF</option>
+                                <option value="image">Image</option>
+                            </select>
+                            <input type="url" class="flex-grow bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" placeholder="https://...">
+                        </div>
+                    </div>
+                    <button onclick="addMoreAttachment('announcementAttachments')" class="mt-2 text-green-400 hover:text-green-300 text-sm">
+                        <i class="fas fa-plus mr-1"></i> Add Another Attachment
+                    </button>
                 </div>
                 <button onclick="saveAnnouncement()" class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-lg border border-green-500">Add</button>
             `;
             showContentModal('Add Announcement', formHTML);
         }
 
+        function addMoreAttachment(containerId) {
+            const container = document.getElementById(containerId);
+            const newRow = document.createElement('div');
+            newRow.className = 'attachment-input-row';
+            newRow.innerHTML = `
+                <select class="w-1/3 bg-gray-800 border border-gray-600 rounded-lg p-3 text-white">
+                    <option value="pdf">PDF</option>
+                    <option value="image">Image</option>
+                </select>
+                <input type="url" class="flex-grow bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" placeholder="https://...">
+                <button onclick="this.parentNode.remove()" class="remove-attachment-btn p-3">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            container.appendChild(newRow);
+        }
+
         function saveAnnouncement() {
             const title = document.getElementById('announcementTitle').value.trim();
             const content = document.getElementById('announcementContent').value.trim();
-            const pdfLink = document.getElementById('announcementPdfLink').value.trim();
-            const imageLink = document.getElementById('announcementImageLink').value.trim();
             
             if (title && content) {
                 const attachments = [];
-                if (pdfLink) attachments.push({ type: 'pdf', url: pdfLink });
-                if (imageLink) attachments.push({ type: 'image', url: imageLink });
+                const attachmentRows = document.getElementById('announcementAttachments').querySelectorAll('.attachment-input-row');
+                
+                attachmentRows.forEach(row => {
+                    const type = row.querySelector('select').value;
+                    const url = row.querySelector('input[type="url"]').value.trim();
+                    if (url) {
+                        attachments.push({ type, url });
+                    }
+                });
                 
                 appData.announcements.push({
                     id: Date.now(), title, content,
@@ -940,8 +969,6 @@
 
         function editAnnouncement(id) {
             const announcement = appData.announcements.find(a => a.id === id);
-            const pdf = announcement.attachments?.find(a => a.type === 'pdf');
-            const img = announcement.attachments?.find(a => a.type === 'image');
             
             const formHTML = `
                 <div>
@@ -952,13 +979,36 @@
                     <label class="block text-sm font-medium mb-2">Content</label>
                     <textarea id="editAnnouncementContent" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white h-24">${announcement.content}</textarea>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2">PDF Link</label>
-                    <input type="url" id="editAnnouncementPdfLink" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" value="${pdf ? pdf.url : ''}">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2">Image Link</label>
-                    <input type="url" id="editAnnouncementImageLink" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" value="${img ? img.url : ''}">
+                <div class="attachment-input-container">
+                    <label class="block text-sm font-medium mb-2">Attachments</label>
+                    <div id="editAnnouncementAttachments">
+                        ${announcement.attachments && announcement.attachments.length > 0 ? 
+                            announcement.attachments.map(att => `
+                                <div class="attachment-input-row">
+                                    <select class="w-1/3 bg-gray-800 border border-gray-600 rounded-lg p-3 text-white">
+                                        <option value="pdf" ${att.type === 'pdf' ? 'selected' : ''}>PDF</option>
+                                        <option value="image" ${att.type === 'image' ? 'selected' : ''}>Image</option>
+                                    </select>
+                                    <input type="url" class="flex-grow bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" value="${att.url}">
+                                    <button onclick="this.parentNode.remove()" class="remove-attachment-btn p-3">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            `).join('')
+                            : `
+                            <div class="attachment-input-row">
+                                <select class="w-1/3 bg-gray-800 border border-gray-600 rounded-lg p-3 text-white">
+                                    <option value="pdf">PDF</option>
+                                    <option value="image">Image</option>
+                                </select>
+                                <input type="url" class="flex-grow bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" placeholder="https://...">
+                            </div>
+                            `
+                        }
+                    </div>
+                    <button onclick="addMoreAttachment('editAnnouncementAttachments')" class="mt-2 text-green-400 hover:text-green-300 text-sm">
+                        <i class="fas fa-plus mr-1"></i> Add Another Attachment
+                    </button>
                 </div>
                 <div class="flex space-x-2">
                     <button onclick="updateAnnouncement(${id})" class="flex-1 bg-green-600 hover:bg-green-700 p-3 rounded-lg border border-green-500">Update</button>
@@ -971,14 +1021,19 @@
         function updateAnnouncement(id) {
             const title = document.getElementById('editAnnouncementTitle').value.trim();
             const content = document.getElementById('editAnnouncementContent').value.trim();
-            const pdfLink = document.getElementById('editAnnouncementPdfLink').value.trim();
-            const imageLink = document.getElementById('editAnnouncementImageLink').value.trim();
             
             const index = appData.announcements.findIndex(a => a.id === id);
             if (index !== -1 && title && content) {
                 const attachments = [];
-                if (pdfLink) attachments.push({ type: 'pdf', url: pdfLink });
-                if (imageLink) attachments.push({ type: 'image', url: imageLink });
+                const attachmentRows = document.getElementById('editAnnouncementAttachments').querySelectorAll('.attachment-input-row');
+                
+                attachmentRows.forEach(row => {
+                    const type = row.querySelector('select').value;
+                    const url = row.querySelector('input[type="url"]').value.trim();
+                    if (url) {
+                        attachments.push({ type, url });
+                    }
+                });
                 
                 appData.announcements[index] = {
                     ...appData.announcements[index],
@@ -1012,24 +1067,8 @@
             showContentModal('Add Daily Notice', formHTML);
         }
 
-        function saveDailyNotice() {
-            const content = document.getElementById('dailyNoticeText').value.trim();
-            
-            if (content) {
-                appData.dailyNotices.push({
-                    id: Date.now(), content,
-                    date: new Date().toISOString()
-                });
-                hideModal('contentModal');
-                renderCurrentPage();
-                markUnsavedChanges();
-                showMessage('Notice added');
-            }
-        }
-
         function editDailyNotice(id) {
             const notice = appData.dailyNotices.find(n => n.id === id);
-            
             const formHTML = `
                 <div>
                     <label class="block text-sm font-medium mb-2">Notice</label>
@@ -1069,30 +1108,19 @@
             }
         }
 
-        // Multiple attachment functions for homework
-        function createAttachmentInput(type = 'pdf', url = '') {
-            return `
-                <div class="attachment-input-group">
-                    <i class="fas fa-times remove-btn" onclick="removeAttachmentInput(this)"></i>
-                    <div class="mb-2">
-                        <select class="attachment-type w-full bg-gray-800 border border-gray-600 rounded-lg p-2 text-white text-sm" onchange="updateAttachmentIcon(this)">
-                            <option value="pdf" ${type === 'pdf' ? 'selected' : ''}>PDF</option>
-                            <option value="image" ${type === 'image' ? 'selected' : ''}>Image</option>
-                        </select>
-                    </div>
-                    <div>
-                        <input type="url" class="attachment-url w-full bg-gray-800 border border-gray-600 rounded-lg p-2 text-white text-sm" placeholder="https://..." value="${url}">
-                    </div>
-                </div>
-            `;
-        }
-
-        function removeAttachmentInput(element) {
-            element.closest('.attachment-input-group').remove();
-        }
-
-        function updateAttachmentIcon(selectElement) {
-            // This function can be used to update icons if needed
+        function saveDailyNotice() {
+            const content = document.getElementById('dailyNoticeText').value.trim();
+            
+            if (content) {
+                appData.dailyNotices.push({
+                    id: Date.now(), content,
+                    date: new Date().toISOString()
+                });
+                hideModal('contentModal');
+                renderCurrentPage();
+                markUnsavedChanges();
+                showMessage('Notice added');
+            }
         }
 
         function addHomework() {
@@ -1113,23 +1141,24 @@
                     <label class="block text-sm font-medium mb-2">Due Date</label>
                     <input type="date" id="homeworkDueDate" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white">
                 </div>
-                <div>
+                <div class="attachment-input-container">
                     <label class="block text-sm font-medium mb-2">Attachments</label>
-                    <div id="attachmentsContainer">
-                        ${createAttachmentInput()}
+                    <div id="homeworkAttachments">
+                        <div class="attachment-input-row">
+                            <select class="w-1/3 bg-gray-800 border border-gray-600 rounded-lg p-3 text-white">
+                                <option value="pdf">PDF</option>
+                                <option value="image">Image</option>
+                            </select>
+                            <input type="url" class="flex-grow bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" placeholder="https://...">
+                        </div>
                     </div>
-                    <button type="button" onclick="addAttachmentInput()" class="mt-2 text-green-400 hover:text-green-300 text-sm">
+                    <button onclick="addMoreAttachment('homeworkAttachments')" class="mt-2 text-green-400 hover:text-green-300 text-sm">
                         <i class="fas fa-plus mr-1"></i> Add Another Attachment
                     </button>
                 </div>
-                <button onclick="saveHomework()" class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-lg border border-green-500 mt-4">Add</button>
+                <button onclick="saveHomework()" class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-lg border border-green-500">Add</button>
             `;
             showContentModal('Add Homework', formHTML);
-        }
-
-        function addAttachmentInput() {
-            const container = document.getElementById('attachmentsContainer');
-            container.insertAdjacentHTML('beforeend', createAttachmentInput());
         }
 
         function saveHomework() {
@@ -1139,12 +1168,12 @@
             const dueDate = document.getElementById('homeworkDueDate').value;
             
             if (subject && title && description && dueDate) {
-                // Collect all attachments
                 const attachments = [];
-                const attachmentGroups = document.querySelectorAll('.attachment-input-group');
-                attachmentGroups.forEach(group => {
-                    const type = group.querySelector('.attachment-type').value;
-                    const url = group.querySelector('.attachment-url').value.trim();
+                const attachmentRows = document.getElementById('homeworkAttachments').querySelectorAll('.attachment-input-row');
+                
+                attachmentRows.forEach(row => {
+                    const type = row.querySelector('select').value;
+                    const url = row.querySelector('input[type="url"]').value.trim();
                     if (url) {
                         attachments.push({ type, url });
                     }
@@ -1165,13 +1194,6 @@
         function editHomework(id) {
             const hw = appData.homeworks.find(h => h.id === id);
             
-            let attachmentsHTML = '';
-            if (hw.attachments && hw.attachments.length > 0) {
-                attachmentsHTML = hw.attachments.map(att => createAttachmentInput(att.type, att.url)).join('');
-            } else {
-                attachmentsHTML = createAttachmentInput();
-            }
-            
             const formHTML = `
                 <div>
                     <label class="block text-sm font-medium mb-2">Subject</label>
@@ -1189,16 +1211,38 @@
                     <label class="block text-sm font-medium mb-2">Due Date</label>
                     <input type="date" id="editHomeworkDueDate" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" value="${new Date(hw.dueDate).toISOString().split('T')[0]}">
                 </div>
-                <div>
+                <div class="attachment-input-container">
                     <label class="block text-sm font-medium mb-2">Attachments</label>
-                    <div id="attachmentsContainer">
-                        ${attachmentsHTML}
+                    <div id="editHomeworkAttachments">
+                        ${hw.attachments && hw.attachments.length > 0 ? 
+                            hw.attachments.map(att => `
+                                <div class="attachment-input-row">
+                                    <select class="w-1/3 bg-gray-800 border border-gray-600 rounded-lg p-3 text-white">
+                                        <option value="pdf" ${att.type === 'pdf' ? 'selected' : ''}>PDF</option>
+                                        <option value="image" ${att.type === 'image' ? 'selected' : ''}>Image</option>
+                                    </select>
+                                    <input type="url" class="flex-grow bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" value="${att.url}">
+                                    <button onclick="this.parentNode.remove()" class="remove-attachment-btn p-3">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            `).join('')
+                            : `
+                            <div class="attachment-input-row">
+                                <select class="w-1/3 bg-gray-800 border border-gray-600 rounded-lg p-3 text-white">
+                                    <option value="pdf">PDF</option>
+                                    <option value="image">Image</option>
+                                </select>
+                                <input type="url" class="flex-grow bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" placeholder="https://...">
+                            </div>
+                            `
+                        }
                     </div>
-                    <button type="button" onclick="addAttachmentInput()" class="mt-2 text-green-400 hover:text-green-300 text-sm">
+                    <button onclick="addMoreAttachment('editHomeworkAttachments')" class="mt-2 text-green-400 hover:text-green-300 text-sm">
                         <i class="fas fa-plus mr-1"></i> Add Another Attachment
                     </button>
                 </div>
-                <div class="flex space-x-2 mt-4">
+                <div class="flex space-x-2">
                     <button onclick="updateHomework(${id})" class="flex-1 bg-green-600 hover:bg-green-700 p-3 rounded-lg border border-green-500">Update</button>
                     <button onclick="deleteHomework(${id})" class="flex-1 bg-gray-600 hover:bg-gray-700 p-3 rounded-lg border border-gray-500">Delete</button>
                 </div>
@@ -1214,12 +1258,12 @@
             
             const index = appData.homeworks.findIndex(hw => hw.id === id);
             if (index !== -1) {
-                // Collect all attachments
                 const attachments = [];
-                const attachmentGroups = document.querySelectorAll('.attachment-input-group');
-                attachmentGroups.forEach(group => {
-                    const type = group.querySelector('.attachment-type').value;
-                    const url = group.querySelector('.attachment-url').value.trim();
+                const attachmentRows = document.getElementById('editHomeworkAttachments').querySelectorAll('.attachment-input-row');
+                
+                attachmentRows.forEach(row => {
+                    const type = row.querySelector('select').value;
+                    const url = row.querySelector('input[type="url"]').value.trim();
                     if (url) {
                         attachments.push({ type, url });
                     }
