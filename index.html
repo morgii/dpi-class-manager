@@ -235,6 +235,9 @@
     <div id="routinePage" class="hidden max-w-md mx-auto px-4 py-6">
         <div class="flex items-center justify-between mb-6">
             <h2 class="text-2xl font-bold text-green-500">Class Routine</h2>
+            <button id="addClassBtn" class="admin-only text-green-400 hover:text-green-300">
+                <i class="fas fa-plus text-xl"></i>
+            </button>
         </div>
         
         <!-- Week Days -->
@@ -673,7 +676,10 @@
             const todayClassesHTML = todayClasses.length > 0 
                 ? todayClasses.map((cls, index) => {
                     const div = document.createElement('div');
-                    div.className = `routine-cell ${cls.status || 'normal'} p-4 rounded-lg text-white`;
+                    div.className = `routine-cell ${cls.status || 'normal'} p-4 rounded-lg text-white ${appData.isAuthenticated ? 'cursor-pointer' : ''}`;
+                    if (appData.isAuthenticated) {
+                        div.onclick = () => editClass(dayName, index);
+                    }
                     div.innerHTML = `
                         <div class="flex justify-between items-start">
                             <div class="flex-1">
@@ -816,7 +822,10 @@
             const routineHTML = classes.length > 0
                 ? classes.map((cls, index) => {
                     const div = document.createElement('div');
-                    div.className = `routine-cell ${cls.status || 'normal'} p-4 rounded-lg text-white`;
+                    div.className = `routine-cell ${cls.status || 'normal'} p-4 rounded-lg text-white ${appData.isAuthenticated ? 'cursor-pointer' : ''}`;
+                    if (appData.isAuthenticated) {
+                        div.onclick = () => editClass(day, index);
+                    }
                     div.innerHTML = `
                         <div class="flex justify-between items-start">
                             <div class="flex-1">
@@ -890,6 +899,149 @@
             document.getElementById('contentModalTitle').textContent = title;
             document.getElementById('contentForm').innerHTML = formHTML;
             showModal('contentModal');
+        }
+
+        function editClass(day, index) {
+            const cls = appData.routine[day][index];
+            const formHTML = `
+                <div>
+                    <label class="block text-sm font-medium mb-2">Day</label>
+                    <select id="editClassDay" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white">
+                        <option value="sunday" ${day === 'sunday' ? 'selected' : ''}>Sunday</option>
+                        <option value="monday" ${day === 'monday' ? 'selected' : ''}>Monday</option>
+                        <option value="tuesday" ${day === 'tuesday' ? 'selected' : ''}>Tuesday</option>
+                        <option value="wednesday" ${day === 'wednesday' ? 'selected' : ''}>Wednesday</option>
+                        <option value="thursday" ${day === 'thursday' ? 'selected' : ''}>Thursday</option>
+                        <option value="friday" ${day === 'friday' ? 'selected' : ''}>Friday</option>
+                        <option value="saturday" ${day === 'saturday' ? 'selected' : ''}>Saturday</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Subject</label>
+                    <input type="text" id="editClassSubject" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" value="${cls.subject}">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Teacher</label>
+                    <input type="text" id="editClassTeacher" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" value="${cls.teacher}">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Time</label>
+                    <input type="text" id="editClassTime" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" value="${cls.time}">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Classroom</label>
+                    <input type="text" id="editClassroom" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" value="${cls.classroom || ''}" placeholder="e.g. 412, 414/A">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Status</label>
+                    <select id="classStatus" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white">
+                        <option value="normal" ${(cls.status || 'normal') === 'normal' ? 'selected' : ''}>Normal</option>
+                        <option value="cancelled" ${cls.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                        <option value="problem" ${cls.status === 'problem' ? 'selected' : ''}>Problem</option>
+                    </select>
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="updateClass('${day}', ${index})" class="flex-1 bg-green-600 hover:bg-green-700 p-3 rounded-lg border border-green-500">Update</button>
+                    <button onclick="deleteClass('${day}', ${index})" class="flex-1 bg-gray-600 hover:bg-gray-700 p-3 rounded-lg border border-gray-500">Delete</button>
+                </div>
+            `;
+            showContentModal('Edit Class', formHTML);
+        }
+
+        function updateClass(oldDay, index) {
+            const day = document.getElementById('editClassDay').value;
+            const subject = document.getElementById('editClassSubject').value.trim();
+            const teacher = document.getElementById('editClassTeacher').value.trim();
+            const time = document.getElementById('editClassTime').value.trim();
+            const classroom = document.getElementById('editClassroom').value.trim();
+            const status = document.getElementById('classStatus').value;
+            
+            if (subject && teacher && time) {
+                const updatedClass = {
+                    subject, teacher, time, 
+                    classroom: classroom || null,
+                    status: status !== 'normal' ? status : null
+                };
+                
+                // If day changed, remove from old day and add to new day
+                if (day !== oldDay) {
+                    appData.routine[oldDay].splice(index, 1);
+                    if (!appData.routine[day]) appData.routine[day] = [];
+                    appData.routine[day].push(updatedClass);
+                } else {
+                    appData.routine[day][index] = updatedClass;
+                }
+                
+                hideModal('contentModal');
+                renderCurrentPage();
+                markUnsavedChanges();
+                showMessage('Class updated');
+            }
+        }
+
+        function deleteClass(day, index) {
+            if (confirm('Delete this class?')) {
+                appData.routine[day].splice(index, 1);
+                hideModal('contentModal');
+                renderCurrentPage();
+                markUnsavedChanges();
+                showMessage('Class deleted');
+            }
+        }
+
+        function addClass() {
+            const formHTML = `
+                <div>
+                    <label class="block text-sm font-medium mb-2">Day</label>
+                    <select id="newClassDay" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white">
+                        <option value="sunday">Sunday</option>
+                        <option value="monday">Monday</option>
+                        <option value="tuesday">Tuesday</option>
+                        <option value="wednesday">Wednesday</option>
+                        <option value="thursday">Thursday</option>
+                        <option value="friday">Friday</option>
+                        <option value="saturday">Saturday</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Subject</label>
+                    <input type="text" id="newClassSubject" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" placeholder="Subject">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Teacher</label>
+                    <input type="text" id="newClassTeacher" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" placeholder="Teacher">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Time</label>
+                    <input type="text" id="newClassTime" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" placeholder="e.g. 9:00-10:00">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Classroom</label>
+                    <input type="text" id="newClassroom" class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 text-white" placeholder="e.g. 412">
+                </div>
+                <button onclick="saveNewClass()" class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-lg border border-green-500">Add Class</button>
+            `;
+            showContentModal('Add Class', formHTML);
+        }
+
+        function saveNewClass() {
+            const day = document.getElementById('newClassDay').value;
+            const subject = document.getElementById('newClassSubject').value.trim();
+            const teacher = document.getElementById('newClassTeacher').value.trim();
+            const time = document.getElementById('newClassTime').value.trim();
+            const classroom = document.getElementById('newClassroom').value.trim();
+            
+            if (subject && teacher && time) {
+                if (!appData.routine[day]) appData.routine[day] = [];
+                appData.routine[day].push({
+                    subject, teacher, time,
+                    classroom: classroom || null
+                });
+                hideModal('contentModal');
+                renderCurrentPage();
+                markUnsavedChanges();
+                showMessage('Class added');
+            }
         }
 
         function addAnnouncement() {
@@ -1319,6 +1471,7 @@
             // Modal handlers
             document.getElementById('adminBtn').addEventListener('click', () => showModal('adminModal'));
             document.getElementById('floatingAdmin').addEventListener('click', () => showModal('adminModal'));
+            document.getElementById('addClassBtn').addEventListener('click', addClass);
             document.getElementById('addHomeworkBtn').addEventListener('click', addHomework);
             document.getElementById('addAnnouncementBtn').addEventListener('click', addAnnouncement);
             document.getElementById('addDailyNoticeBtn').addEventListener('click', addDailyNotice);
