@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Class Routine - DPI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .bangla-font { font-family: 'Hind Siliguri', sans-serif; }
+        .english-font { font-family: 'Inter', sans-serif; }
+        
+        * {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            touch-action: manipulation;
+        }
+
+        .no-scroll { overflow: hidden; }
+        .modal-backdrop { backdrop-filter: blur(12px); }
+
+        .routine-card {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            border: 2px solid #10b981;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .routine-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .routine-card:hover::before {
+            left: 100%;
+        }
+
+        .routine-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(16, 185, 129, 0.3);
+            border-color: #34d399;
+        }
+
+        .routine-card.cancelled {
+            background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+            border: 2px solid #6b7280;
+        }
+
+        .routine-card.problem {
+            background: linear-gradient(135deg, #7c2d12 0%, #9a3412 100%);
+            border: 2px solid #f97316;
+        }
+
+        .day-tab {
+            background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+            border: 2px solid #6b7280;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .day-tab.active {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-color: #34d399;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .day-tab:hover:not(.active) {
+            background: linear-gradient(135deg, #4b5563 0%, #6b7280 100%);
+            transform: translateY(-2px);
+        }
+
+        .floating-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .floating-btn:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 20px 40px rgba(16, 185, 129, 0.6);
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(16, 185, 129, 0.3);
+            border-top: 4px solid #10b981;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .status-normal { background: #10b981; }
+        .status-cancelled { background: #6b7280; }
+        .status-problem { background: #f97316; }
+
+        .time-indicator {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .admin-badge {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            z-index: 1000;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .hidden { display: none !important; }
+        .admin-authenticated .admin-only { display: block; }
+        .admin-authenticated .admin-inline { display: inline-block; }
+    </style>
+</head>
+<body class="text-white english-font">
+    <!-- Admin Badge -->
+    <div id="adminBadge" class="admin-badge hidden">
+        <i class="fas fa-shield-alt mr-2"></i>ADMIN MODE
+    </div>
+
+    <!-- Header -->
+    <header class="glass-card sticky top-0 z-40 border-b-2 border-emerald-500">
+        <div class="max-w-6xl mx-auto px-6 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="w-14 h-14 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-calendar-alt text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-emerald-600 bg-clip-text text-transparent">
+                            Class Routine
+                        </h1>
+                        <p class="text-gray-400 text-sm">Dhaka Polytechnic Institute</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div id="connectionStatus" class="w-4 h-4 bg-gray-500 rounded-full"></div>
+                    <button id="adminBtn" class="text-gray-400 hover:text-emerald-400 transition-colors p-2 rounded-lg hover:bg-gray-800">
+                        <i class="fas fa-cog text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="fixed inset-0 bg-slate-900 flex items-center justify-center z-50">
+        <div class="text-center">
+            <div class="loading-spinner mx-auto mb-6"></div>
+            <h2 class="text-xl font-semibold text-emerald-400 mb-2">Loading Class Routine</h2>
+            <p class="text-gray-400">Please wait...</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-6 py-8">
+        <!-- Day Navigation -->
+        <div class="flex overflow-x-auto space-x-3 mb-8 pb-2">
+            <button class="day-tab flex-shrink-0 px-6 py-3 rounded-xl font-medium transition-all" data-day="sunday">
+                <i class="fas fa-sun mr-2"></i>Sunday
+            </button>
+            <button class="day-tab flex-shrink-0 px-6 py-3 rounded-xl font-medium transition-all" data-day="monday">
+                <i class="fas fa-briefcase mr-2"></i>Monday
+            </button>
+            <button class="day-tab flex-shrink-0 px-6 py-3 rounded-xl font-medium transition-all" data-day="tuesday">
+                <i class="fas fa-star mr-2"></i>Tuesday
+            </button>
+            <button class="day-tab flex-shrink-0 px-6 py-3 rounded-xl font-medium transition-all" data-day="wednesday">
+                <i class="fas fa-heart mr-2"></i>Wednesday
+            </button>
+            <button class="day-tab flex-shrink-0 px-6 py-3 rounded-xl font-medium transition-all" data-day="thursday">
+                <i class="fas fa-bolt mr-2"></i>Thursday
+            </button>
+            <button class="day-tab flex-shrink-0 px-6 py-3 rounded-xl font-medium transition-all" data-day="friday">
+                <i class="fas fa-mosque mr-2"></i>Friday
+            </button>
+            <button class="day-tab flex-shrink-0 px-6 py-3 rounded-xl font-medium transition-all" data-day="saturday">
+                <i class="fas fa-coffee mr-2"></i>Saturday
+            </button>
+        </div>
+
+        <!-- Add Class Button (Admin Only) -->
+        <div class="admin-only mb-6">
+            <button id="addClassBtn" class="floating-btn px-6 py-3 rounded-xl font-semibold shadow-lg transition-all">
+                <i class="fas fa-plus mr-2"></i>Add New Class
+            </button>
+        </div>
+
+        <!-- Routine Grid -->
+        <div id="routineContainer" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <!-- Classes will be loaded here -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden text-center py-20">
+            <div class="w-32 h-32 bg-gradient-to-br from-gray-700 to-gray-800 rounded-full mx-auto mb-6 flex items-center justify-center">
+                <i class="fas fa-calendar-times text-4xl text-gray-500"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-300 mb-2">No Classes Today</h3>
+            <p class="text-gray-500">Enjoy your free day!</p>
+            <button class="admin-only mt-6 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 rounded-xl font-medium transition-colors" onclick="addClass()">
+                <i class="fas fa-plus mr-2"></i>Add First Class
+            </button>
+        </div>
+    </main>
+
+    <!-- Admin Authentication Modal -->
+    <div id="adminModal" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-6">
+            <div class="glass-card rounded-2xl p-8 w-full max-w-md shadow-2xl">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-2xl font-bold text-emerald-400">
+                        <i class="fas fa-shield-alt mr-3"></i>Admin Access
+                    </h3>
+                    <button class="close-modal text-gray-400 hover:text-white transition-colors text-xl">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <!-- Authentication Form -->
+                <div id="authSection">
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-300 mb-3">
+                            <i class="fab fa-github mr-2"></i>GitHub Personal Access Token
+                        </label>
+                        <input type="password" id="githubToken" class="w-full bg-gray-800 border-2 border-gray-600 rounded-xl p-4 text-white focus:border-emerald-500 transition-colors" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+                        <p class="text-xs text-gray-500 mt-2">Required for saving changes to the routine</p>
+                    </div>
+                    <button id="authenticateBtn" class="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 p-4 rounded-xl font-semibold transition-all shadow-lg">
+                        <i class="fas fa-key mr-2"></i>Authenticate
+                    </button>
+                </div>
+                
+                <!-- Admin Panel -->
+                <div id="adminPanel" class="hidden">
+                    <div class="mb-6 p-4 bg-emerald-900/30 rounded-xl border border-emerald-500">
+                        <p class="text-emerald-400 text-sm mb-3">
+                            <i class="fas fa-check-circle mr-2"></i>Admin access granted!
+                        </p>
+                        <div class="text-xs text-gray-400">
+                            <p>• Click any class to edit</p>
+                            <p>• Use "Add New Class" to create classes</p>
+                            <p>• Changes auto-save to GitHub</p>
+                        </div>
+                    </div>
+                    <button id="logoutBtn" class="w-full bg-gray-600 hover:bg-gray-700 p-4 rounded-xl font-semibold transition-all">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Class Editor Modal -->
+    <div id="classModal" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-6">
+            <div class="glass-card rounded-2xl p-8 w-full max-w-lg shadow-2xl">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 id="classModalTitle" class="text-2xl font-bold text-emerald-400">
+                        <i class="fas fa-edit mr-3"></i>Edit Class
+                    </h3>
+                    <button class="close-modal text-gray-400 hover:text-white transition-colors text-xl">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <form id="classForm" class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Subject</label>
+                        <input type="text" id="classSubject" class="w-full bg-gray-800 border-2 border-gray-600 rounded-xl p-4 text-white focus:border-emerald-500 transition-colors" placeholder="e.g., Computer Networks" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Teacher</label>
+                        <input type="text" id="classTeacher" class="w-full bg-gray-800 border-2 border-gray-600 rounded-xl p-4 text-white focus:border-emerald-500 transition-colors" placeholder="e.g., Dr. Rahman" required>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Time</label>
+                            <input type="text" id="classTime" class="w-full bg-gray-800 border-2 border-gray-600 rounded-xl p-4 text-white focus:border-emerald-500 transition-colors" placeholder="9:00-10:30" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Classroom</label>
+                            <input type="text" id="classRoom" class="w-full bg-gray-800 border-2 border-gray-600 rounded-xl p-4 text-white focus:border-emerald-500 transition-colors" placeholder="412">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Status</label>
+                        <select id="classStatus" class="w-full bg-gray-800 border-2 border-gray-600 rounded-xl p-4 text-white focus:border-emerald-500 transition-colors">
+                            <option value="normal">Normal</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="problem">Problem/Changed</option>
+                        </select>
+                    </div>
+                    <div class="flex space-x-4">
+                        <button type="submit" class="flex-1 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 p-4 rounded-xl font-semibold transition-all shadow-lg">
+                            <i class="fas fa-save mr-2"></i>Save Changes
+                        </button>
+                        <button type="button" id="deleteClassBtn" class="px-6 bg-red-600 hover:bg-red-700 p-4 rounded-xl font-semibold transition-all shadow-lg">
+                            <i class="fas fa-trash mr-2"></i>Delete
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed top-6 right-6 z-50 transform translate-x-full transition-transform duration-300">
+        <div class="glass-card p-4 rounded-xl shadow-2xl">
+            <div class="flex items-center space-x-3">
+                <i id="toastIcon" class="fas text-xl"></i>
+                <span id="toastMessage" class="font-medium"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Application state
+        let routineData = {};
+        let isAuthenticated = false;
+        let githubToken = '';
+        let currentDay = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+        let editingClass = null;
+
+        const GITHUB_REPO = 'morgii/dpi-class-manager';
+        const DATA_URL = 'https://morgii.github.io/dpi-class-manager/data/routine.json';
+
+        // Sample data for demonstration
+        const sampleData = {
+            "sunday": [
+                {
+                    "subject": "Computer Networks",
+                    "teacher": "Dr. Rahman",
+                    "time": "9:00-10:30",
+                    "classroom": "412",
+                    "status": "normal"
+                },
+                {
+                    "subject": "Database Management",
+                    "teacher": "Prof. Ahmed",
+                    "time": "10:30-12:00",
+                    "classroom": "414/A",
+                    "status": "normal"
+                },
+                {
+                    "subject": "Software Engineering",
+                    "teacher": "Ms. Fatima",
+                    "time": "1:00-2:30",
+                    "classroom": "Lab-2",
+                    "status": "cancelled"
+                }
+            ],
+            "monday": [
+                {
+                    "subject": "Data Structures",
+                    "teacher": "Mr. Hassan",
+                    "time": "8:00-9:30",
+                    "classroom": "401",
+                    "status": "normal"
+                },
+                {
+                    "subject": "Operating Systems",
+                    "teacher": "Dr. Karim",
+                    "time": "9:30-11:00",
+                    "classroom": "403/B",
+                    "status": "problem"
+                }
+            ],
+            "tuesday": [
+                {
+                    "subject": "Machine Learning",
+                    "teacher": "Dr. Nasir",
+                    "time": "9:00-10:30",
+                    "classroom": "412",
+                    "status": "normal"
+                }
+            ],
+            "wednesday": [
+                {
+                    "subject": "Cybersecurity",
+                    "teacher": "Dr. Khan",
+                    "time": "8:30-10:00",
+                    "classroom": "402",
+                    "status": "normal"
+                }
+            ],
+            "thursday": [
+                {
+                    "subject": "Digital Signal Processing",
+                    "teacher": "Dr. Mahmud",
+                    "time": "9:00-10:30",
+                    "classroom": "415",
+                    "status": "normal"
+                }
+            ],
+            "friday": [
+                {
+                    "subject": "Thesis Defense Preparation",
+                    "teacher": "All Faculty",
+                    "time": "10:00-12:00",
+                    "classroom": "Auditorium",
+                    "status": "normal"
+                }
+            ],
+            "saturday": [
+                {
+                    "subject": "Networking Lab",
+                    "teacher": "Mr. Rafiq",
+                    "time": "9:00-11:00",
+                    "classroom": "Lab-4",
+                    "status": "normal"
+                }
+            ]
+        };
+
+        // Utility functions
+        function detectLanguage(text) {
+            return /[\u0980-\u09FF]/.test(text) ? 'bangla' : 'english';
+        }
+
+        function applyFontClass(element, text) {
+            const lang = detectLanguage(text);
+            element.classList.remove('bangla-font', 'english-font');
+            element.classList.add(lang === 'bangla' ? 'bangla-font' : 'english-font');
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toastIcon');
+            const messageEl = document.getElementById('toastMessage');
+            
+            icon.className = `fas text-xl ${type === 'success' ? 'fa-check-circle text-emerald-400' : 'fa-exclamation-circle text-red-400'}`;
+            messageEl.textContent = message;
+            
+            toast.classList.remove('translate-x-full');
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+            }, 3000);
+        }
+
+        function updateConnectionStatus(connected) {
+            const status = document.getElementById('connectionStatus');
+            status.className = `w-4 h-4 rounded-full transition-colors ${connected ? 'bg-emerald-400' : 'bg-red-400'}`;
+        }
+
+        // Data loading and saving
+        async function loadRoutineData() {
+            try {
+                // Try to load from GitHub Pages
+                const response = await fetch(`${DATA_URL}?t=${Date.now()}`);
+                if (response.ok) {
+                    routineData = await response.json();
+                    updateConnectionStatus(true);
+                } else {
+                    throw new Error('Failed to load data');
+                }
+            } catch (error) {
+                console.log('Using sample data due to:', error.message);
+                routineData = sampleData;
+                updateConnectionStatus(false);
+            }
+            
+            document.getElementById('loadingScreen').classList.add('hidden');
+            renderRoutine();
+        }
+
+        async function saveRoutineData() {
+            if (!isAuthenticated) {
+                showToast('Please authenticate first', 'error');
+                return false;
+            }
+
+            try {
+                const headers = {
+                    'Authorization': `token ${githubToken}`,
+                    'Content-Type': 'application/json'
+                };
+
+                // Get current commit SHA
+                const repoResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}`, { headers });
+                if (!repoResponse.ok) throw new Error('Repository access denied');
+                
+                const repoData = await repoResponse.json();
+                const refResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/refs/heads/${repoData.default_branch}`, { headers });
+                const refData = await refResponse.json();
+                const currentSha = refData.object.sha;
+
+                // Create blob for routine.json
+                const content = JSON.stringify(routineData, null, 2);
+                const blobResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/blobs`, {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({
+                        content: btoa(unescape(encodeURIComponent(content))),
+                        encoding: 'base64'
+                    })
+                });
+                const blobData = await blobResponse.json();
+
+                // Get current commit tree
+                const commitResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/commits/${currentSha}`, { headers });
+                const commitData = await commitResponse.json();
+
+                // Create new tree
+                const treeResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/trees`, {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({
+                        base_tree: commitData.tree.sha,
+                        tree: [{
+                            path: 'data/routine.json',
+                            mode: '100644',
+                            type: 'blob',
+                            sha: blobData.sha
+                        }]
+                    })
+                });
+                const treeData = await treeResponse.json();
+
+                // Create commit
+                const newCommitResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/commits`, {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({
+                        message: 'Update class routine',
+                        tree: treeData.sha,
+                        parents: [currentSha]
+                    })
+                });
+                const newCommitData = await newCommitResponse.json();
+
+                // Update reference
+                await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/refs/heads/${repoData.default_branch}`, {
+                    method: 'PATCH',
+                    headers,
+                    body: JSON.stringify({ sha: newCommitData.sha })
+                });
+
+                showToast('Routine saved successfully!');
+                return true;
+            } catch (error) {
+                console.error('Save error:', error);
+                showToast(`Save failed: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        // Rendering functions
+        function renderRoutine() {
+            const container = document.getElementById('routineContainer');
+            const emptyState = document.getElementById('emptyState');
+            const classes = routineData[currentDay] || [];
+
+            // Update day tabs
+            document.querySelectorAll('.day-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.dataset.day === currentDay) {
+                    tab.classList.add('active');
+                }
+            });
+
+            if (classes.length === 0) {
+                container.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            container.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+
+            container.innerHTML = classes.map((cls, index) => {
+                const statusClass = cls.status === 'cancelled' ? 'cancelled' : 
+                                  cls.status === 'problem' ? 'problem' : '';
+                
+                return `
+                    <div class="routine-card ${statusClass} p-6 rounded-2xl shadow-xl fade-in-up ${isAuthenticated ? 'cursor-pointer' : ''}" 
+                         ${isAuthenticated ? `onclick="editClass(${index})"` : ''}>
+                        <div class="status-badge status-${cls.status || 'normal'}">
+                            <i class="fas ${cls.status === 'cancelled' ? 'fa-times' : 
+                                            cls.status === 'problem' ? 'fa-exclamation' : 'fa-check'}"></i>
+                        </div>
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex-1">
+                                <h3 class="text-lg font-bold text-white mb-2">${cls.subject}</h3>
+                                <p class="text-gray-300 text-sm mb-1">
+                                    <i class="fas fa-user mr-2"></i>${cls.teacher}
+                                </p>
+                                ${cls.classroom ? `
+                                    <p class="text-gray-400 text-xs">
+                                        <i class="fas fa-door-open mr-2"></i>Room ${cls.classroom}
+                                    </p>
+                                ` : ''}
+                            </div>
+                            <div class="time-indicator">
+                                ${cls.time}
+                            </div>
+                        </div>
+                        
+                        ${cls.status === 'cancelled' ? `
+                            <div class="bg-gray-600/30 p-3 rounded-lg">
+                                <p class="text-red-400 text-xs font-medium">
+                                    <i class="fas fa-ban mr-2"></i>Class Cancelled
+                                </p>
+                            </div>
+                        ` : cls.status === 'problem' ? `
+                            <div class="bg-orange-600/30 p-3 rounded-lg">
+                                <p class="text-orange-400 text-xs font-medium">
+                                    <i class="fas fa-exclamation-triangle mr-2"></i>Schedule Changed
+                                </p>
+                            </div>
+                        ` : ''}
+                        
+                        ${isAuthenticated ? `
+                            <div class="admin-only mt-4 flex justify-end">
+                                <button onclick="event.stopPropagation(); editClass(${index})" class="text-emerald-400 hover:text-emerald-300 transition-colors">
+                                    <i class="fas fa-edit mr-1"></i>Edit
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            // Apply font classes
+            container.querySelectorAll('.routine-card').forEach((card, index) => {
+                const cls = classes[index];
+                applyFontClass(card, cls.subject + cls.teacher);
+            });
+        }
+
+        // Modal functions
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+            document.body.classList.add('no-scroll');
+        }
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+            document.body.classList.remove('no-scroll');
+        }
+
+        // Authentication
+        async function authenticate() {
+            const token = document.getElementById('githubToken').value.trim();
+            if (!token) {
+                showToast('Please enter a valid token', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`https://api.github.com/repos/${GITHUB_REPO}`, {
+                    headers: { 'Authorization': `token ${token}` }
+                });
+
+                if (response.ok) {
+                    isAuthenticated = true;
+                    githubToken = token;
+                    document.body.classList.add('admin-authenticated');
+                    document.getElementById('authSection').classList.add('hidden');
+                    document.getElementById('adminPanel').classList.remove('hidden');
+                    document.getElementById('adminBadge').classList.remove('hidden');
+                    showToast('Authentication successful!');
+                    renderRoutine();
+                } else {
+                    throw new Error('Invalid token or insufficient permissions');
+                }
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
+        function logout() {
+            isAuthenticated = false;
+            githubToken = '';
+            document.body.classList.remove('admin-authenticated');
+            document.getElementById('authSection').classList.remove('hidden');
+            document.getElementById('adminPanel').classList.add('hidden');
+            document.getElementById('adminBadge').classList.add('hidden');
+            document.getElementById('githubToken').value = '';
+            showToast('Logged out successfully');
+            renderRoutine();
+        }
+
+        // Class management
+        function addClass() {
+            editingClass = null;
+            document.getElementById('classModalTitle').innerHTML = '<i class="fas fa-plus mr-3"></i>Add New Class';
+            document.getElementById('classForm').reset();
+            document.getElementById('deleteClassBtn').classList.add('hidden');
+            showModal('classModal');
+        }
+
+        function editClass(index) {
+            if (!isAuthenticated) return;
+            
+            editingClass = index;
+            const cls = routineData[currentDay][index];
+            
+            document.getElementById('classModalTitle').innerHTML = '<i class="fas fa-edit mr-3"></i>Edit Class';
+            document.getElementById('classSubject').value = cls.subject;
+            document.getElementById('classTeacher').value = cls.teacher;
+            document.getElementById('classTime').value = cls.time;
+            document.getElementById('classRoom').value = cls.classroom || '';
+            document.getElementById('classStatus').value = cls.status || 'normal';
+            document.getElementById('deleteClassBtn').classList.remove('hidden');
+            
+            showModal('classModal');
+        }
+
+        async function saveClass(event) {
+            event.preventDefault();
+            
+            const classData = {
+                subject: document.getElementById('classSubject').value.trim(),
+                teacher: document.getElementById('classTeacher').value.trim(),
+                time: document.getElementById('classTime').value.trim(),
+                classroom: document.getElementById('classRoom').value.trim() || null,
+                status: document.getElementById('classStatus').value === 'normal' ? null : document.getElementById('classStatus').value
+            };
+
+            if (!classData.subject || !classData.teacher || !classData.time) {
+                showToast('Please fill in all required fields', 'error');
+                return;
+            }
+
+            if (!routineData[currentDay]) {
+                routineData[currentDay] = [];
+            }
+
+            if (editingClass !== null) {
+                routineData[currentDay][editingClass] = classData;
+                showToast('Class updated successfully!');
+            } else {
+                routineData[currentDay].push(classData);
+                showToast('Class added successfully!');
+            }
+
+            hideModal('classModal');
+            renderRoutine();
+            await saveRoutineData();
+        }
+
+        async function deleteClass() {
+            if (editingClass === null || !confirm('Are you sure you want to delete this class?')) {
+                return;
+            }
+
+            routineData[currentDay].splice(editingClass, 1);
+            hideModal('classModal');
+            renderRoutine();
+            showToast('Class deleted successfully!');
+            await saveRoutineData();
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            loadRoutineData();
+
+            // Day navigation
+            document.querySelectorAll('.day-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    currentDay = this.dataset.day;
+                    renderRoutine();
+                });
+            });
+
+            // Modal handlers
+            document.getElementById('adminBtn').addEventListener('click', () => showModal('adminModal'));
+            document.getElementById('addClassBtn').addEventListener('click', addClass);
+            document.getElementById('authenticateBtn').addEventListener('click', authenticate);
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+            document.getElementById('classForm').addEventListener('submit', saveClass);
+            document.getElementById('deleteClassBtn').addEventListener('click', deleteClass);
+
+            // Close modal handlers
+            document.querySelectorAll('.close-modal').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const modal = this.closest('[id$="Modal"]');
+                    hideModal(modal.id);
+                });
+            });
+
+            // Click outside to close modals
+            document.querySelectorAll('[id$="Modal"]').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        hideModal(this.id);
+                    }
+                });
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('[id$="Modal"]:not(.hidden)').forEach(modal => {
+                        hideModal(modal.id);
+                    });
+                }
+                
+                if (isAuthenticated && e.key === '+' && e.ctrlKey) {
+                    e.preventDefault();
+                    addClass();
+                }
+            });
+
+            // Prevent zoom and touch gestures
+            document.addEventListener('touchstart', function(e) {
+                if (e.touches.length > 1) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', function(e) {
+                const now = Date.now();
+                if (now - lastTouchEnd <= 300) {
+                    e.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
+
+            // Prevent gesture events
+            ['gesturestart', 'gesturechange', 'gestureend'].forEach(event => {
+                document.addEventListener(event, e => e.preventDefault());
+            });
+
+            // Set current day on load
+            document.querySelector(`[data-day="${currentDay}"]`).classList.add('active');
+        });
+
+        // Auto-refresh data every 5 minutes
+        setInterval(() => {
+            if (!isAuthenticated) {
+                loadRoutineData();
+            }
+        }, 300000);
+    </script>
+</body>
+</html>
