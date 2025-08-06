@@ -109,6 +109,18 @@
             animation: spin 1s linear infinite;
         }
 
+        .error-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #ef4444;
+        }
+
+        .error-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.7;
+        }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -276,6 +288,18 @@
                 <i class="fas fa-plus mr-2"></i>Add First Class
             </button>
         </div>
+
+        <!-- Error State -->
+        <div id="errorState" class="hidden error-state">
+            <div class="error-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-red-400 mb-4">Failed to Load Routine</h3>
+            <p class="text-gray-400 mb-6">Unable to connect to the routine data source.</p>
+            <button id="retryBtn" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 rounded-xl font-medium transition-colors">
+                <i class="fas fa-redo mr-2"></i>Retry
+            </button>
+        </div>
     </main>
 
     <!-- Admin Authentication Modal -->
@@ -399,94 +423,6 @@
         const GITHUB_REPO = 'morgii/dpi-class-manager';
         const DATA_URL = 'https://morgii.github.io/dpi-class-manager/data/routine.json';
 
-        // Sample data for demonstration
-        const sampleData = {
-            "sunday": [
-                {
-                    "subject": "Computer Networks",
-                    "teacher": "Dr. Rahman",
-                    "time": "9:00-10:30",
-                    "classroom": "412",
-                    "status": "normal"
-                },
-                {
-                    "subject": "Database Management",
-                    "teacher": "Prof. Ahmed",
-                    "time": "10:30-12:00",
-                    "classroom": "414/A",
-                    "status": "normal"
-                },
-                {
-                    "subject": "Software Engineering",
-                    "teacher": "Ms. Fatima",
-                    "time": "1:00-2:30",
-                    "classroom": "Lab-2",
-                    "status": "cancelled"
-                }
-            ],
-            "monday": [
-                {
-                    "subject": "Data Structures",
-                    "teacher": "Mr. Hassan",
-                    "time": "8:00-9:30",
-                    "classroom": "401",
-                    "status": "normal"
-                },
-                {
-                    "subject": "Operating Systems",
-                    "teacher": "Dr. Karim",
-                    "time": "9:30-11:00",
-                    "classroom": "403/B",
-                    "status": "problem"
-                }
-            ],
-            "tuesday": [
-                {
-                    "subject": "Machine Learning",
-                    "teacher": "Dr. Nasir",
-                    "time": "9:00-10:30",
-                    "classroom": "412",
-                    "status": "normal"
-                }
-            ],
-            "wednesday": [
-                {
-                    "subject": "Cybersecurity",
-                    "teacher": "Dr. Khan",
-                    "time": "8:30-10:00",
-                    "classroom": "402",
-                    "status": "normal"
-                }
-            ],
-            "thursday": [
-                {
-                    "subject": "Digital Signal Processing",
-                    "teacher": "Dr. Mahmud",
-                    "time": "9:00-10:30",
-                    "classroom": "415",
-                    "status": "normal"
-                }
-            ],
-            "friday": [
-                {
-                    "subject": "Thesis Defense Preparation",
-                    "teacher": "All Faculty",
-                    "time": "10:00-12:00",
-                    "classroom": "Auditorium",
-                    "status": "normal"
-                }
-            ],
-            "saturday": [
-                {
-                    "subject": "Networking Lab",
-                    "teacher": "Mr. Rafiq",
-                    "time": "9:00-11:00",
-                    "classroom": "Lab-4",
-                    "status": "normal"
-                }
-            ]
-        };
-
         // Utility functions
         function detectLanguage(text) {
             return /[\u0980-\u09FF]/.test(text) ? 'bangla' : 'english';
@@ -517,25 +453,42 @@
             status.className = `w-4 h-4 rounded-full transition-colors ${connected ? 'bg-emerald-400' : 'bg-red-400'}`;
         }
 
+        function showLoadingState() {
+            document.getElementById('loadingScreen').classList.remove('hidden');
+            document.getElementById('routineContainer').classList.add('hidden');
+            document.getElementById('emptyState').classList.add('hidden');
+            document.getElementById('errorState').classList.add('hidden');
+        }
+
+        function showErrorState() {
+            document.getElementById('loadingScreen').classList.add('hidden');
+            document.getElementById('routineContainer').classList.add('hidden');
+            document.getElementById('emptyState').classList.add('hidden');
+            document.getElementById('errorState').classList.remove('hidden');
+        }
+
         // Data loading and saving
         async function loadRoutineData() {
-            try {
-                // Try to load from GitHub Pages
-                const response = await fetch(`${DATA_URL}?t=${Date.now()}`);
-                if (response.ok) {
-                    routineData = await response.json();
-                    updateConnectionStatus(true);
-                } else {
-                    throw new Error('Failed to load data');
-                }
-            } catch (error) {
-                console.log('Using sample data due to:', error.message);
-                routineData = sampleData;
-                updateConnectionStatus(false);
-            }
+            showLoadingState();
             
-            document.getElementById('loadingScreen').classList.add('hidden');
-            renderRoutine();
+            try {
+                const response = await fetch(`${DATA_URL}?t=${Date.now()}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                routineData = data;
+                updateConnectionStatus(true);
+                document.getElementById('loadingScreen').classList.add('hidden');
+                renderRoutine();
+                
+            } catch (error) {
+                console.error('Failed to load routine data:', error);
+                updateConnectionStatus(false);
+                showErrorState();
+                showToast(`Failed to load routine: ${error.message}`, 'error');
+            }
         }
 
         async function saveRoutineData() {
@@ -623,7 +576,11 @@
         function renderRoutine() {
             const container = document.getElementById('routineContainer');
             const emptyState = document.getElementById('emptyState');
+            const errorState = document.getElementById('errorState');
             const classes = routineData[currentDay] || [];
+
+            // Hide error state
+            errorState.classList.add('hidden');
 
             // Update day tabs
             document.querySelectorAll('.day-tab').forEach(tab => {
@@ -845,6 +802,7 @@
             document.getElementById('logoutBtn').addEventListener('click', logout);
             document.getElementById('classForm').addEventListener('submit', saveClass);
             document.getElementById('deleteClassBtn').addEventListener('click', deleteClass);
+            document.getElementById('retryBtn').addEventListener('click', loadRoutineData);
 
             // Close modal handlers
             document.querySelectorAll('.close-modal').forEach(btn => {
@@ -899,10 +857,10 @@
             });
 
             // Set current day on load
-            document.querySelector(`[data-day="${currentDay}"]`).classList.add('active');
+            document.querySelector(`[data-day="${currentDay}"]`)?.classList.add('active');
         });
 
-        // Auto-refresh data every 5 minutes
+        // Auto-refresh data every 5 minutes (only if not authenticated to avoid conflicts)
         setInterval(() => {
             if (!isAuthenticated) {
                 loadRoutineData();
