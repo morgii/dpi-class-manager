@@ -6,5 +6,14 @@
       "time": "9:00 - 10:00",
       "classroom": "411"
     }
+  ],
+  "wednesday": [
+    {
+      "subject": "Computer Network",
+      "teacher": "Alauddin",
+      "time": "9-10",
+      "classroom": "212",
+      "status": null
+    }
   ]
 }
