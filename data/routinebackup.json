@@ -1,0 +1,159 @@
+{
+  "sunday": [
+    {
+      "subject": "Environmental Studies",
+      "teacher": "Unknown teacher",
+      "time": "8:00-8:45",
+      "classroom": "204",
+      "status": null
+    },
+    {
+      "subject": "Web Design & Development-I",
+      "teacher": "Mili",
+      "time": "8:45-10:45",
+      "classroom": "206",
+      "status": null
+    },
+    {
+      "subject": "Computer Peripherals & Interfacing",
+      "teacher": "Afroja Begum",
+      "time": "10:15-11:00",
+      "classroom": "306",
+      "status": null
+    },
+    {
+      "subject": "Data Structure & Algorithm",
+      "teacher": "Amit",
+      "time": "11:00-11:45",
+      "classroom": "306",
+      "status": null
+    },
+    {
+      "subject": "Java Programming",
+      "teacher": "Anwar Ai Zahid",
+      "time": "11:45-12:30",
+      "classroom": "306",
+      "status": null
+    }
+  ],
+  "monday": [
+    {
+      "subject": "Environmental Studies",
+      "teacher": "Unknown teacher",
+      "time": "9:30-11:00",
+      "classroom": "324/A",
+      "status": null
+    },
+    {
+      "subject": "Business Communication",
+      "teacher": "Rahima",
+      "time": "11:00-11:45",
+      "classroom": "315",
+      "status": null
+    },
+    {
+      "subject": "Digital Electronics-II",
+      "teacher": "Lab teacher",
+      "time": "11:45-12:30",
+      "classroom": "220",
+      "status": null
+    }
+  ],
+  "tuesday": [
+    {
+      "subject": "Java Programming",
+      "teacher": "Anwar Ai Zahid",
+      "time": "8:00-9:30",
+      "classroom": "206",
+      "status": null
+    },
+    {
+      "subject": "Web Design & Development-I",
+      "teacher": "Mili",
+      "time": "9:30-10:15",
+      "classroom": "204",
+      "status": null
+    },
+    {
+      "subject": "Computer Peripherals & Interfacing",
+      "teacher": "Afroja Begum",
+      "time": "10:15-11:45",
+      "classroom": "204",
+      "status": null
+    },
+    {
+      "subject": "Environmental Studies",
+      "teacher": "Unknown teacher",
+      "time": "11:45-12:30",
+      "classroom": "204",
+      "status": null
+    }
+  ],
+  "wednesday": [
+    {
+      "subject": "Digital Electronics-II",
+      "teacher": "Lab teacher",
+      "time": "8:00-8:45",
+      "classroom": "407",
+      "status": null
+    },
+    {
+      "subject": "Data Structure & Algorithm",
+      "teacher": "Amit Sir",
+      "time": "9:30-11:00",
+      "classroom": "206",
+      "status": null
+    },
+    {
+      "subject": "Business Communication",
+      "teacher": "Rahima",
+      "time": "11:00-11:45",
+      "classroom": "320",
+      "status": null
+    },
+    {
+      "subject": "Computer Peripherals & Interfacing",
+      "teacher": "Afroja Begum",
+      "time": "11:45-12:30",
+      "classroom": "401",
+      "status": null
+    },
+    {
+      "subject": "Java Programming",
+      "teacher": "Anwar Ai Zahid",
+      "time": "12:30-1:15",
+      "classroom": "401",
+      "status": null
+    }
+  ],
+  "thursday": [
+    {
+      "subject": "Computer Peripherals & Interfacing",
+      "teacher": "Afroja Begum",
+      "time": "8:45-9:30",
+      "classroom": "208",
+      "status": null
+    },
+    {
+      "subject": "Digital Electronics-II",
+      "teacher": "Lab teacher",
+      "time": "9:30-10:15",
+      "classroom": "208",
+      "status": null
+    },
+    {
+      "subject": "Data Structure & Algorithm",
+      "teacher": "Amit Sir",
+      "time": "10:15-11:00",
+      "classroom": "208",
+      "status": null
+    },
+    {
+      "subject": "Web Design & Development-I",
+      "teacher": "Mili",
+      "time": "11:00-11:45",
+      "classroom": "206",
+      "status": null
+    }
+  ]
+}
