@@ -95,7 +95,7 @@
       "teacher": "Lab teacher",
       "time": "8:00-8:45",
       "classroom": "407",
-      "status": null
+      "status": "problem"
     },
     {
       "subject": "Data Structure & Algorithm",
